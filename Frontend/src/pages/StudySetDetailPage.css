@@ -1,0 +1,85 @@
+.study-set-detail {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.study-set-detail h1 {
+  font-size: 1.75rem;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.card-count {
+  margin: 0 0 24px;
+  font-size: 0.875rem;
+}
+
+.detail-card-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-card {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.detail-card .card-number {
+  flex-shrink: 0;
+  width: 1.5rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.detail-fields {
+  display: flex;
+  flex: 1;
+  gap: 16px;
+  min-width: 0;
+}
+
+.detail-fields > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-fields h2 {
+  margin: 0 0 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.detail-fields p {
+  margin: 0;
+  color: var(--text-h);
+  word-break: break-word;
+}
+
+.study-set-detail a {
+  color: var(--accent);
+}
+
+@media (max-width: 640px) {
+  .detail-fields {
+    flex-direction: column;
+  }
+}
