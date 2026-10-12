@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap");
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Nunito", sans-serif;
+    --color-ink: #272334;
+    --color-paper: #fffcf5;
+    --color-lilac: #e9e3ff;
+    --color-violet: #6547d7;
+    --color-lime: #c9f459;
+    --color-coral: #ff8d7d;
+    --color-blue: #8fc7ff;
+    --color-muted: #716c7c;
+    --color-soft: #f0ece5;
+    --color-line: #d9d3ca;
+    --shadow-sticker: 3px 3px 0 #272334;
+    --shadow-card: 7px 7px 0 #272334;
+}
+
+@layer base {
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        min-width: 320px;
+        background: var(--color-paper);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input {
+        font: inherit;
+    }
+
+    button {
+        cursor: pointer;
+    }
+}
+
+@layer components {
+    .safe-area-top {
+        padding-top: calc(var(--spacing) * 6 + env(safe-area-inset-top, 0px));
+    }
+
+    .field {
+        @apply w-full rounded-2xl border-2 border-line bg-white px-4 py-3.5 font-semibold text-ink outline-none transition placeholder:font-normal placeholder:text-muted/60 hover:border-muted focus:border-violet focus:ring-4 focus:ring-violet/10;
+    }
+
+    .primary-button {
+        @apply flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-ink bg-violet px-5 py-4 font-extrabold text-white shadow-sticker transition hover:-translate-y-0.5 hover:shadow-card active:translate-y-0 active:shadow-sticker;
+    }
+
+    .social-button {
+        @apply flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-line bg-white px-5 py-3.5 font-extrabold transition hover:border-ink hover:shadow-sticker;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
