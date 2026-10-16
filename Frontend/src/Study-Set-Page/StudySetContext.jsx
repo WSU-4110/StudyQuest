@@ -20,13 +20,34 @@ export function StudySetProvider({ children }) {
     return studySets.find((set) => set.id === id) ?? null
   }
 
+  function updateStudySet(id, { title, cards }) {
+    setStudySets((prev) =>
+      prev.map((set) =>
+        set.id === id
+          ? {
+              ...set,
+              title,
+              cards,
+              updatedAt: new Date().toISOString(),
+            }
+          : set,
+      ),
+    )
+  }
+
   function removeStudySet(id) {
     setStudySets((prev) => prev.filter((set) => set.id !== id))
   }
 
   return (
     <StudySetContext.Provider
-      value={{ studySets, addStudySet, getStudySet, removeStudySet }}
+      value={{
+        studySets,
+        addStudySet,
+        updateStudySet,
+        getStudySet,
+        removeStudySet,
+      }}
     >
       {children}
     </StudySetContext.Provider>

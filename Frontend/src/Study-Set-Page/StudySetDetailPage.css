@@ -7,9 +7,16 @@
   box-sizing: border-box;
 }
 
-.back-link {
-  display: inline-block;
+.detail-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 16px;
+}
+
+.back-link,
+.edit-link {
   color: var(--accent);
   text-decoration: none;
 }
@@ -61,6 +68,15 @@
   min-width: 0;
 }
 
+.card-type-label {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+
 .detail-fields h2 {
   margin: 0 0 6px;
   font-size: 0.875rem;
@@ -72,6 +88,39 @@
   margin: 0;
   color: var(--text-h);
   word-break: break-word;
+}
+
+.detail-option-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.detail-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-h);
+  word-break: break-word;
+}
+
+.detail-option.correct {
+  border-color: var(--accent-border);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.correct-badge {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
 }
 
 .study-set-detail a {

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useStudySets } from '../context/StudySetContext.jsx'
+import { useStudySets } from './StudySetContext.jsx'
 import './StudySetLibraryPage.css'
 
 function StudySetLibraryPage() {
@@ -30,15 +30,18 @@ function StudySetLibraryPage() {
       ) : (
         <ul className="study-set-list">
           {studySets.map((set) => (
-            <li key={set.id}>
-              <Link className="study-set-item" to={`/studysets/${set.id}`}>
-                <div>
-                  <h2>{set.title}</h2>
-                  <p>
-                    {set.cards.length}{' '}
-                    {set.cards.length === 1 ? 'card' : 'cards'}
-                  </p>
-                </div>
+            <li key={set.id} className="study-set-item">
+              <Link className="study-set-main" to={`/studysets/${set.id}`}>
+                <h2>{set.title}</h2>
+                <p>
+                  {set.cards.length}{' '}
+                  {set.cards.length === 1 ? 'card' : 'cards'}
+                </p>
+              </Link>
+              <div className="item-actions">
+                <Link className="edit-btn" to={`/studysets/${set.id}/edit`}>
+                  Edit
+                </Link>
                 <button
                   type="button"
                   className="delete-btn"
@@ -46,7 +49,7 @@ function StudySetLibraryPage() {
                 >
                   Delete
                 </button>
-              </Link>
+              </div>
             </li>
           ))}
         </ul>
