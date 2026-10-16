@@ -1,4 +1,5 @@
 import { NavLink, Route, Routes } from 'react-router-dom'
+import Homepage from './pages/Homepage.jsx'
 import { StudySetProvider } from './context/StudySetContext.jsx'
 import CreateStudySetPage from './pages/CreateStudySetPage.jsx'
 import StudySetDetailPage from './pages/StudySetDetailPage.jsx'
@@ -16,6 +17,8 @@ function App() {
           <NavLink to="/create">Create</NavLink>
         </nav>
         <Routes>
+          <Route path="/" element={<Homepage />}/>
+
           <Route path="/" element={<StudySetLibraryPage />} />
           <Route path="/create" element={<CreateStudySetPage />} />
           <Route path="/studysets/:id" element={<StudySetDetailPage />} />
