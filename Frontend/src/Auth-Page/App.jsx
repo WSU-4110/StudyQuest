@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import { setRememberMe, supabase } from "@/lib/supabaseClient";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext.jsx";
+import { isSupabaseConfigured, setRememberMe, supabase } from "@/lib/supabaseClient";
 
 function Icon({ children, className = "size-5", viewBox = "0 0 24 24" }) {
     return (
@@ -113,6 +115,8 @@ function GoogleMark() {
 }
 
 export default function App() {
+    const navigate = useNavigate();
+    const { session } = useAuth();
     const [mode, setMode] = useState("login");
     const [showPassword, setShowPassword] = useState(false);
     const [displayName, setDisplayName] = useState("");
@@ -122,15 +126,14 @@ export default function App() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
-    const [session, setSession] = useState(null);
 
     const isLogin = mode === "login";
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data }) => setSession(data.session));
-        const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => setSession(nextSession));
-        return () => data.subscription.unsubscribe();
-    }, []);
+        if (session) {
+            navigate("/", { replace: true });
+        }
+    }, [session, navigate]);
 
     function switchMode(nextMode) {
         setMode(nextMode);
@@ -143,6 +146,12 @@ export default function App() {
         setLoading(true);
         setError(null);
         setMessage(null);
+
+        if (!isSupabaseConfigured || !supabase) {
+            setError("Supabase is not configured. Copy Frontend/.env.example to Frontend/.env and add your keys.");
+            setLoading(false);
+            return;
+        }
 
         if (isLogin) {
             setRememberMe(rememberMe);
@@ -171,6 +180,10 @@ export default function App() {
 
     async function handleGoogle() {
         setError(null);
+        if (!isSupabaseConfigured || !supabase) {
+            setError("Supabase is not configured. Copy Frontend/.env.example to Frontend/.env and add your keys.");
+            return;
+        }
         setRememberMe(true);
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
@@ -182,6 +195,10 @@ export default function App() {
     async function handleForgotPassword() {
         setError(null);
         setMessage(null);
+        if (!isSupabaseConfigured || !supabase) {
+            setError("Supabase is not configured. Copy Frontend/.env.example to Frontend/.env and add your keys.");
+            return;
+        }
         if (!email) {
             setError("Enter your email address first, then click \"Forgot password?\".");
             return;
@@ -193,27 +210,8 @@ export default function App() {
         else setMessage("Password reset link sent. Check your inbox.");
     }
 
-    async function handleSignOut() {
-        await supabase.auth.signOut();
-        setPassword("");
-    }
-
     if (session) {
-        const name = session.user.user_metadata?.display_name ?? session.user.email;
-        return (
-            <main className="grid min-h-screen place-items-center bg-paper px-5 text-ink">
-                <div className="w-full max-w-md space-y-6 text-center">
-                    <div className="flex justify-center">
-                        <Logo />
-                    </div>
-                    <h2 className="text-4xl font-extrabold tracking-tight">Welcome, {name}!</h2>
-                    <p className="text-muted">Your quest board is ready.</p>
-                    <button className="primary-button" onClick={handleSignOut} type="button">
-                        <span>Sign out</span>
-                    </button>
-                </div>
-            </main>
-        );
+        return null;
     }
 
     return (

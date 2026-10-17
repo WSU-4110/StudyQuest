@@ -4,12 +4,26 @@
 
 .app-nav {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 16px;
+  width: 100%;
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
-  max-width: 720px;
-  margin: 0 auto;
   box-sizing: border-box;
+}
+
+.app-nav-brand {
+  color: var(--text-h);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.app-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
 }
 
 .app-nav a {
@@ -20,4 +34,19 @@
 .app-nav a.active {
   color: var(--text-h);
   font-weight: 600;
+}
+
+.app-nav-button {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-h);
+  font: inherit;
+  padding: 6px 12px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.app-nav-button:hover {
+  color: var(--text-h);
 }

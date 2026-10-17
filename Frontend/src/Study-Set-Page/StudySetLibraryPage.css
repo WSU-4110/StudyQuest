@@ -64,6 +64,11 @@
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 4px;
+}
+
+.study-set-main {
+  flex: 1;
+  min-width: 0;
   text-decoration: none;
   color: inherit;
 }
@@ -80,8 +85,14 @@
   font-size: 0.875rem;
 }
 
-.delete-btn {
+.item-actions {
+  display: flex;
   flex-shrink: 0;
+  gap: 8px;
+}
+
+.edit-btn,
+.delete-btn {
   font: inherit;
   padding: 8px 12px;
   border: 1px solid var(--border);
@@ -89,4 +100,5 @@
   background: var(--bg);
   color: var(--text-h);
   cursor: pointer;
+  text-decoration: none;
 }

@@ -53,31 +53,127 @@
 
 .card-row {
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
   gap: 12px;
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 4px;
 }
 
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .card-number {
   flex-shrink: 0;
   width: 1.5rem;
-  padding-bottom: 10px;
   font-weight: 600;
   color: var(--text-h);
+}
+
+.card-type-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.type-chip {
+  font: inherit;
+  font-size: 0.8125rem;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.type-chip.active {
+  border-color: var(--text-h);
+  color: var(--text-h);
+  font-weight: 600;
+  background: color-mix(in srgb, var(--text-h) 6%, transparent);
 }
 
 .card-fields {
   display: flex;
   flex: 1;
+  flex-direction: column;
   gap: 12px;
   min-width: 0;
 }
 
+.tf-fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tf-fieldset legend {
+  margin-bottom: 4px;
+  font-size: 0.875rem;
+  color: var(--text-h);
+}
+
+.choice-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--text-h);
+}
+
+.mc-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mc-label {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-h);
+}
+
+.option-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option-list > li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.option-row {
+  flex: 1;
+  min-width: 0;
+}
+
+.option-row input[type='text'] {
+  flex: 1;
+}
+
+.remove-option-btn,
+.add-option-btn {
+  flex-shrink: 0;
+}
+
 .remove-btn {
   flex-shrink: 0;
-  align-self: flex-end;
+  margin-left: auto;
 }
 
 .actions {
@@ -95,6 +191,11 @@
   background: var(--bg);
   color: var(--text-h);
   cursor: pointer;
+}
+
+.create-study-set button.type-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
 }
 
 .create-study-set button[type='submit'] {
@@ -119,16 +220,16 @@
 }
 
 @media (max-width: 640px) {
-  .card-row {
+  .card-header {
     flex-wrap: wrap;
   }
 
-  .card-fields {
-    flex-direction: column;
+  .remove-btn {
+    margin-left: 0;
     width: 100%;
   }
 
-  .remove-btn {
-    margin-left: auto;
+  .option-list > li {
+    flex-wrap: wrap;
   }
 }
