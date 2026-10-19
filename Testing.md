@@ -21,16 +21,16 @@ Status values: Pass / Pass with issues / Fail / Not tested
 ## 2. Test cases
 
 ### Sign up / log in
-| # | Test | Steps | Expected | Result |
+| # | Test | Steps | Expected | Actual | Result |
 | --- | --- | --- | --- | --- | --- |
-| A1 | Valid sign up | Enter valid username, email, password; submit | Account created, user lands on dashboard | |
-| A2 | Invalid email | Enter "abc" as email; submit | Clear error, no account created | |
-| A3 | Weak password | Enter a very short password; submit | Clear error | |
-| A4 | Duplicate email | Sign up with an email already used | "Email in use" style error | |
-| A5 | Valid log in | Log in with correct credentials | Dashboard loads | |
-| A6 | Wrong password | Log in with a wrong password | Clear error, stays logged out | |
-| A7 | Log out | Click log out | Returns to login, protected pages inaccessible | |
-| A8 | Protected route | While logged out, open the dashboard URL directly | Redirected to login | |
+| A1 | Valid sign up | Enter valid username, email, password; submit | Account created, user lands on dashboard | | |
+| A2 | Invalid email | Enter "abc" as email; submit | Clear error, no account created | | |
+| A3 | Weak password | Enter a very short password; submit | Clear error | | |
+| A4 | Duplicate email | Sign up with an email already used | "Email in use" style error | | |
+| A5 | Valid log in | Log in with correct credentials | Dashboard loads | | |
+| A6 | Wrong password | Log in with a wrong password | Clear error, stays logged out | | |
+| A7 | Log out | Click log out | Returns to login, protected pages inaccessible | | |
+| A8 | Protected route | While logged out, open the dashboard URL directly | Redirected to login | | |
 
 ### Dashboard
 | # | Test | Steps | Expected | Actual | Result |
