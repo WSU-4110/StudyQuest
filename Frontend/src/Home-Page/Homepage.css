@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Nunito:wght@400;600;700;800;900&display=swap');
+
+
+.homepage-container {
+  background-color: #1c173f;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+
+}
+
+.homepage-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 1rem;
+}
+
+.homepage-header h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-family: 'Bungee Shade', sans-serif ;
+  font-size: 5rem;
+  margin: 0;
+  margin-bottom: 60px;
+  color:rgba(68, 244, 68, 0.879);
+}
+
+.homepage-header h2{
+  text-align: center;
+  margin-bottom: 4rem;
+  font-family: "Bungee", sans-serif;
+  font-size: 1.5rem;
+  font-weight:900;
+  margin: 0;
+  color: #7555af;
+}
+
+ .signUp-button,
+.createSet-button {
+  position: relative;
+  display: inline-block;
+  padding: 14px 24px;
+  background-color: #7555af;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Bungee', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 1px 0 #e9e3ff,
+    0 9px 0 #543986;
+
+  text-shadow: 0 1px 0 #000;
+  transition: background-color 0.2s ease;
+}
+
+.signUp-button:hover,
+.createSet-button:hover {
+  background-color: #998dc4;
+}
+
+.signUp-button:active,
+.createSet-button:active {
+  transform: translateY(7px);
+  box-shadow: inset 0 1px 0 #e9e3ff;
+}
+
+.button-container {
+  display: flex;
+ /* flex-direction: column; */
+ justify-content: center;
+  gap: 15px;
+  margin-top: 4rem;
+}
