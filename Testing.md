@@ -43,7 +43,7 @@ Status values: Pass / Pass with issues / Fail / Not tested
 ### Study set page
 | # | Test | Steps | Expected | Actual | Result |
 | --- | --- | --- | --- | --- | --- |
-| C1 | Questions display | Open a set with several questions | Questions and answers show correctly | | |
+| C1 | Questions display | Open a set with several questions | Questions and answers show correctly | When opening a study set, it shows every question and their respective answer | Pass |
 | C2 | Navigate cards | Move next / previous | Works, including first and last card | | |
 | C3 | Set with 0 questions | Open an empty set | Handled gracefully | | |
 | C4 | Set with 1 question | Open a one-question set | No broken navigation | | |
