@@ -26,19 +26,19 @@ Status values: Pass / Pass with issues / Fail / Not tested
 | A1 | Valid sign up | Enter valid username, email, password; submit | Account created, user lands on dashboard | Supabase is not configured. Copy Frontend/.env.example to Frontend/.env and add keys | Fail |
 | A2 | Invalid email | Enter "abc" as email; submit | Clear error, no account created | Shows invalid message telling user that '@' needs to be included | Pass |
 | A3 | Weak password | Enter a very short password; submit | Clear error | Shows error message saying password needs 8 characters or more | Pass |
-| A4 | Duplicate email | Sign up with an email already used | "Email in use" style error | | |
-| A5 | Valid log in | Log in with correct credentials | Dashboard loads | | |
-| A6 | Wrong password | Log in with a wrong password | Clear error, stays logged out | | |
-| A7 | Log out | Click log out | Returns to login, protected pages inaccessible | | |
-| A8 | Protected route | While logged out, open the dashboard URL directly | Redirected to login | | |
+| A4 | Duplicate email | Sign up with an email already used | "Email in use" style error | Not tested: blocked by BUG-001 | |
+| A5 | Valid log in | Log in with correct credentials | Dashboard loads | Not tested: blocked by BUG-001 | |
+| A6 | Wrong password | Log in with a wrong password | Clear error, stays logged out | Not tested: blocked by BUG-001 | |
+| A7 | Log out | Click log out | Returns to login, protected pages inaccessible | Not tested: blocked by BUG-001 | |
+| A8 | Protected route | While logged out, open the dashboard URL directly | Redirected to login | Not tested: blocked by BUG-001 | |
 
 ### Dashboard
 | # | Test | Steps | Expected | Actual | Result |
 | --- | --- | --- | --- | --- | --- |
-| B1 | Loads | Log in, open dashboard | Page renders with no console errors | | |
-| B2 | Empty state | Log in as a brand-new user | Friendly empty message, no crash | | |
-| B3 | Correct user data | Log in as two different users | Each sees only their own data | | |
-| B4 | Navigation | Click every link/button | Each goes to the right place | | |
+| B1 | Loads | Log in, open dashboard | Page renders with no console errors | Not tested: blocked by BUG-001 | |
+| B2 | Empty state | Log in as a brand-new user | Friendly empty message, no crash | Not tested: blocked by BUG-001 | |
+| B3 | Correct user data | Log in as two different users | Each sees only their own data | Not tested: blocked by BUG-001 | |
+| B4 | Navigation | Click every link/button | Each goes to the right place | Not tested: blocked by BUG-001 | |
 
 ### Study set page
 | # | Test | Steps | Expected | Actual | Result |
