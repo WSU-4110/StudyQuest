@@ -2,7 +2,7 @@
 
 **Tester:** <Alan Nguyen>
 **Date tested:** <10/18/26>
-**Build tested:** <testing-report / commit hash / deployed URL>
+**Build tested:** <testing-report / commit hash /[ deployed URL](https://study-quest-phi.vercel.app/)>
 
 ## 1. Summary
 
