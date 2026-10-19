@@ -3,7 +3,6 @@
 **Tester:** <Alan Nguyen>
 **Date tested:** <10/18/26>
 **Build tested:** <testing-report / commit hash / deployed URL>
-**Browser / device:** <Chrome on Windows>
 
 ## 1. Summary
 
