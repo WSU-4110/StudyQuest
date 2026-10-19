@@ -47,8 +47,8 @@ Status values: Pass / Pass with issues / Fail / Not tested
 | C2 | Navigate cards | Move next / previous | Works, including first and last card | There's no option to move to the next or previous flashcard. It shows all your questions/answers all on one page | Pass with issues |
 | C3 | Set with 0 questions | Open an empty set | Handled gracefully | When trying to make a Study Set with no questions, an error message pops up: "Add at least one complete card. Multiple choice needs a question, two filled options, and at least one correct choice." | Fail |
 | C4 | Set with 1 question | Open a one-question set | No broken navigation | I am able to create a Study set with just one question | Pass |
-| C5 | Long / special text | Question with very long text, emoji, symbols | Displays without breaking layout | | |
-| C6 | Refresh | Refresh the page mid-session | Data still loads | | |
+| C5 | Long / special text | Question with very long text, emoji, symbols | Displays without breaking layout | Created question the size of a basic paragraph and it displays without breaking layout | Pass |
+| C6 | Refresh | Refresh the page mid-session | Data still loads | When I try to refresh in the middle of creating a study set I get an error message saying this page does not exist | Fail |
 
 ### Database / Supabase connection
 | # | Test | Steps | Expected | Actual | Result |
