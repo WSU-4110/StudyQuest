@@ -67,14 +67,17 @@ Status values: Pass / Pass with issues / Fail / Not tested
 ## 3. Bugs found
 
 ### BUG-001: <short title>
-- **Severity:** Blocker / Major / Minor
-- **Feature / owner:** <feature> / <teammate>
+- **Severity:** BLOCKER / Major / Minor
+- **Feature / owner:** <Supabase client connection> / <Justin>
 - **Steps to reproduce:**
-  1. ...
-  2. ...
-- **Expected:** ...
-- **Actual:** ...
-- **Screenshot / error message:** ...
+  1. Open https://study-quest-phi.vercel.app/
+  2. Go to the Sign up tab
+  3. Enter display name, email and password
+  4. Click "Create my account"
+- **Expected:** Account is created and the user continues into the app
+- **Actual:** Red error banner: "Supabase is not configured. Copy Frontend/.env.example to Frontend/.env and add your keys."
+- **Screenshot / error message:** <img width="941" height="489" alt="image" src="https://github.com/user-attachments/assets/74a4a46a-31a5-407f-8efb-bad21a2a5527" />
+
 - **Status:** Open
 
 ## 4. Suggested improvements (UX / design)
