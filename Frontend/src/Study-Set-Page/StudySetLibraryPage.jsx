@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom'
+import { useAuth } from '../Auth-Page/AuthContext.jsx'
 import { useStudySets } from './StudySetContext.jsx'
 import './StudySetLibraryPage.css'
 
 function StudySetLibraryPage() {
-  const { studySets, removeStudySet } = useStudySets()
+  const { session } = useAuth()
+  const { studySets, removeStudySet, loading, error, isPersisted } =
+    useStudySets()
 
   function handleDelete(event, id, title) {
     event.preventDefault()
@@ -22,12 +25,30 @@ function StudySetLibraryPage() {
         </Link>
       </div>
 
-      {studySets.length === 0 ? (
+      {session && isPersisted ? (
+        <p className="library-sync-note">Synced to your account.</p>
+      ) : null}
+
+      {!session ? (
+        <p className="library-sync-note">
+          <Link to="/login">Sign in</Link> to save study sets to your account.
+        </p>
+      ) : null}
+
+      {error ? <p className="library-sync-error">{error}</p> : null}
+
+      {loading ? (
+        <p className="library-sync-note">Loading your study sets…</p>
+      ) : null}
+
+      {!loading && studySets.length === 0 ? (
         <div className="empty-state">
           <p>No study sets yet.</p>
           <Link to="/create">Create your first study set</Link>
         </div>
-      ) : (
+      ) : null}
+
+      {!loading && studySets.length > 0 ? (
         <ul className="study-set-list">
           {studySets.map((set) => (
             <li key={set.id} className="study-set-item">
@@ -53,7 +74,7 @@ function StudySetLibraryPage() {
             </li>
           ))}
         </ul>
-      )}
+      ) : null}
     </main>
   )
 }
