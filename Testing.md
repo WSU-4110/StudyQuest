@@ -44,9 +44,9 @@ Status values: Pass / Pass with issues / Fail / Not tested
 | # | Test | Steps | Expected | Actual | Result |
 | --- | --- | --- | --- | --- | --- |
 | C1 | Questions display | Open a set with several questions | Questions and answers show correctly | When opening a study set, it shows every question and their respective answer | Pass |
-| C2 | Navigate cards | Move next / previous | Works, including first and last card | | |
-| C3 | Set with 0 questions | Open an empty set | Handled gracefully | | |
-| C4 | Set with 1 question | Open a one-question set | No broken navigation | | |
+| C2 | Navigate cards | Move next / previous | Works, including first and last card | There's no option to move to the next or previous flashcard. It shows all your questions/answers all on one page | Pass with issues |
+| C3 | Set with 0 questions | Open an empty set | Handled gracefully | When trying to make a Study Set with no questions, an error message pops up: "Add at least one complete card. Multiple choice needs a question, two filled options, and at least one correct choice." | Fail |
+| C4 | Set with 1 question | Open a one-question set | No broken navigation | I am able to create a Study set with just one question | Pass |
 | C5 | Long / special text | Question with very long text, emoji, symbols | Displays without breaking layout | | |
 | C6 | Refresh | Refresh the page mid-session | Data still loads | | |
 
@@ -68,7 +68,7 @@ Status values: Pass / Pass with issues / Fail / Not tested
 
 ### BUG-001: <short title>
 - **Severity:** BLOCKER / Major / Minor
-- **Feature / owner:** <Supabase client connection> / <Justin>
+- **Feature / owner:** Supabase client connection / Justin
 - **Steps to reproduce:**
   1. Open https://study-quest-phi.vercel.app/
   2. Go to the Sign up tab
