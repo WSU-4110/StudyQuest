@@ -23,7 +23,7 @@ Status values: Pass / Pass with issues / Fail / Not tested
 ### Sign up / log in
 | # | Test | Steps | Expected | Actual | Result |
 | --- | --- | --- | --- | --- | --- |
-| A1 | Valid sign up | Enter valid username, email, password; submit | Account created, user lands on dashboard | | |
+| A1 | Valid sign up | Enter valid username, email, password; submit | Account created, user lands on dashboard | Supabase is not configured. Copy Frontend/.env.example to Frontend/.env and add keys | |
 | A2 | Invalid email | Enter "abc" as email; submit | Clear error, no account created | | |
 | A3 | Weak password | Enter a very short password; submit | Clear error | | |
 | A4 | Duplicate email | Sign up with an email already used | "Email in use" style error | | |
