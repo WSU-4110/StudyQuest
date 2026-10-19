@@ -21,10 +21,20 @@ export function StudySetProvider({ children }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const studySetsRef = useRef(studySets)
+  const studysetsIdRef = useRef(null)
+  const sessionRef = useRef(session)
 
   useEffect(() => {
     studySetsRef.current = studySets
   }, [studySets])
+
+  useEffect(() => {
+    studysetsIdRef.current = studysetsId
+  }, [studysetsId])
+
+  useEffect(() => {
+    sessionRef.current = session
+  }, [session])
 
   const isPersisted = Boolean(session && studysetsId)
 
@@ -37,6 +47,7 @@ export function StudySetProvider({ children }) {
       if (!session) {
         setStudySets([])
         setStudysetsId(null)
+        studysetsIdRef.current = null
         setError(null)
         setLoading(false)
         return
@@ -48,15 +59,19 @@ export function StudySetProvider({ children }) {
       try {
         const id = await ensureUserProfile(session)
         if (cancelled) return
+        studysetsIdRef.current = id
         setStudysetsId(id)
 
         const sets = await loadStudySets(id)
         if (cancelled) return
         setStudySets(sets)
+        studySetsRef.current = sets
       } catch (err) {
         if (cancelled) return
+        studysetsIdRef.current = null
         setStudysetsId(null)
         setStudySets([])
+        studySetsRef.current = []
         setError(err.message ?? 'Failed to sync study sets.')
       } finally {
         if (!cancelled) setLoading(false)
@@ -71,8 +86,17 @@ export function StudySetProvider({ children }) {
   }, [session, authLoading])
 
   async function persistSets(nextSets) {
-    if (!session || !studysetsId) return
-    await saveStudySets(studysetsId, nextSets)
+    const activeSession = sessionRef.current
+    if (!activeSession) return
+
+    let id = studysetsIdRef.current
+    if (!id) {
+      id = await ensureUserProfile(activeSession)
+      studysetsIdRef.current = id
+      setStudysetsId(id)
+    }
+
+    await saveStudySets(id, nextSets)
   }
 
   function addStudySet({ title, cards }) {
@@ -87,7 +111,7 @@ export function StudySetProvider({ children }) {
     setStudySets(nextSets)
     studySetsRef.current = nextSets
 
-    if (session && studysetsId) {
+    if (sessionRef.current) {
       persistSets(nextSets).catch((err) => {
         setError(err.message ?? 'Failed to save study set.')
       })
@@ -114,7 +138,7 @@ export function StudySetProvider({ children }) {
     setStudySets(nextSets)
     studySetsRef.current = nextSets
 
-    if (session && studysetsId) {
+    if (sessionRef.current) {
       persistSets(nextSets).catch((err) => {
         setError(err.message ?? 'Failed to update study set.')
       })
@@ -126,7 +150,7 @@ export function StudySetProvider({ children }) {
     setStudySets(nextSets)
     studySetsRef.current = nextSets
 
-    if (session && studysetsId) {
+    if (sessionRef.current) {
       persistSets(nextSets).catch((err) => {
         setError(err.message ?? 'Failed to delete study set.')
       })

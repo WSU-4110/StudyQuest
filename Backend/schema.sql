@@ -169,6 +169,9 @@ create policy studysets_select_own on studysets
 create policy studysets_update_own on studysets
   for update using (
     studysets_id in (select studysets_id from users where auth_user_id = auth.uid())
+  )
+  with check (
+    studysets_id in (select studysets_id from users where auth_user_id = auth.uid())
   );
 
 drop policy if exists currencycosmetics_select_own on currencycosmetics;
