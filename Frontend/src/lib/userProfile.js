@@ -79,12 +79,19 @@ export async function saveStudySets(studysetsId, sets) {
     throw new Error('Supabase is not configured.')
   }
 
-  const { error } = await supabase
+  // .select() so RLS-blocked updates surface as failures (empty result, no error).
+  const { data, error } = await supabase
     .from('studysets')
     .update({ sets })
     .eq('studysets_id', studysetsId)
+    .select('studysets_id')
+    .maybeSingle()
 
   if (error) {
     throw new Error(error.message)
+  }
+
+  if (!data?.studysets_id) {
+    throw new Error('Could not save study sets. Check that you are signed in.')
   }
 }
