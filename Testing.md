@@ -66,7 +66,7 @@ Status values: Pass / Pass with issues / Fail / Not tested
 
 ## 3. Bugs found
 
-### BUG-001: <short title>
+### BUG-001: Unable to create an account
 - **Severity:** BLOCKER / Major / Minor
 - **Feature / owner:** Supabase client connection / Justin
 - **Steps to reproduce:**
@@ -79,6 +79,19 @@ Status values: Pass / Pass with issues / Fail / Not tested
 - **Screenshot / error message:** <img width="941" height="489" alt="image" src="https://github.com/user-attachments/assets/74a4a46a-31a5-407f-8efb-bad21a2a5527" />
 
 - **Status:** Open
+
+### BUG-002: Refreshing any page other than home shows 404 NOT_FOUND
+- **Severity:** Major
+- **Feature / owner:** Deployment/routing (Vercel config) / whoever owns Vercel
+- **Steps to reproduce:**
+  1. Open https://study-quest-phi.vercel.app/
+  2. Navigate (by clicking) to the Create page, Library page, or Login page
+  3. Refresh the browser (F5), or paste that page's URL into a new tab
+- **Expected:** The same page reloads
+- **Actual:** Vercel shows "This page doesn't exist" with the code `404 NOT_FOUND`. Same result on /create, /library and /login. Any unsaved work in the page, such as a study set being created, is lost.
+- **Screenshot / error message:** <img width="952" height="500" alt="image" src="https://github.com/user-attachments/assets/8b74be54-a2c2-4509-978a-8c9d1a5c7791" />
+- **Status:** Open
+
 
 ## 4. Suggested improvements (UX / design)
 
