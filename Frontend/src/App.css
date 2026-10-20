@@ -1,3 +1,7 @@
+
+@import url('https://fonts.googleapis.com/css?family=Bungee+Shade');
+@import url('https://fonts.googleapis.com/css?family=Bungee');
+
 .app-shell {
   min-height: 100svh;
 }
@@ -14,9 +18,12 @@
 }
 
 .app-nav-brand {
-  color: var(--text-h);
-  font-weight: 700;
-  text-decoration: none;
+
+  max-width: 1200px;
+  padding: 1rem;
+  font-family: 'Bungee', sans-serif;
+  font-size: 2rem;
+  font-style: normal;
 }
 
 .app-nav-right {
@@ -48,5 +55,7 @@
 }
 
 .app-nav-button:hover {
-  color: var(--text-h);
+  color: var(--text);
 }
+
+
