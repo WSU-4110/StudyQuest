@@ -6,15 +6,14 @@
 
 ## 1. Summary
 
-<2-3 sentences: what works, what is broken, overall readiness.>
 
 | Feature | Owner | Status |
 | --- | --- | --- |
-| Database tables | Mason | Not tested |
-| Supabase client connection | Justin | Not tested |
-| Dashboard / home page | Zlata | Not tested |
-| Sign up / log in pages | Salvador | Not tested |
-| Study set page | Jordan | Not tested |
+| Database tables | Mason | Pass |
+| Supabase client connection | Justin | Pass |
+| Dashboard / home page | Zlata | Pass |
+| Sign up / log in pages | Salvador | Pass |
+| Study set page | Jordan | Pass |
 
 Status values: Pass / Pass with issues / Fail / Not tested
 
@@ -23,7 +22,7 @@ Status values: Pass / Pass with issues / Fail / Not tested
 ### Sign up / log in
 | # | Test | Steps | Expected | Actual | Result |
 | --- | --- | --- | --- | --- | --- |
-| A1 | Valid sign up | Enter valid username, email, password; submit | Account created, user lands on dashboard | Supabase is not configured. Copy Frontend/.env.example to Frontend/.env and add keys | Fail |
+| A1 | Valid sign up | Enter valid username, email, password; submit | Account created, user lands on dashboard | Confirmation email is sent to me where I confirm my identity and sign up | Pass |
 | A2 | Invalid email | Enter "abc" as email; submit | Clear error, no account created | Shows invalid message telling user that '@' needs to be included | Pass |
 | A3 | Weak password | Enter a very short password; submit | Clear error | Shows error message saying password needs 8 characters or more | Pass |
 | A4 | Duplicate email | Sign up with an email already used | "Email in use" style error | Not tested: blocked by BUG-001 | |
