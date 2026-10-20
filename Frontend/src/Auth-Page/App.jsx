@@ -103,17 +103,6 @@ function QuestIllustration() {
     );
 }
 
-function GoogleMark() {
-    return (
-        <svg aria-hidden="true" className="size-5" viewBox="0 0 24 24">
-            <path d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.7 4.7 0 0 1-2 3v2.5h3.3c1.9-1.8 2.9-4.4 2.9-7.4Z" fill="#4285F4" />
-            <path d="M12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.5c-.9.6-2.1 1-3.4 1a5.9 5.9 0 0 1-5.5-4.1H3.1v2.6A10 10 0 0 0 12 22Z" fill="#34A853" />
-            <path d="M6.5 14a6 6 0 0 1 0-3.9V7.4H3.1A10 10 0 0 0 3.1 16.6L6.5 14Z" fill="#FBBC05" />
-            <path d="M12 5.9c1.5 0 2.8.5 3.9 1.5l2.9-2.9A9.8 9.8 0 0 0 3.1 7.4l3.4 2.7A5.9 5.9 0 0 1 12 5.9Z" fill="#EA4335" />
-        </svg>
-    );
-}
-
 export default function App() {
     const navigate = useNavigate();
     const { session } = useAuth();
@@ -176,20 +165,6 @@ export default function App() {
         }
 
         setLoading(false);
-    }
-
-    async function handleGoogle() {
-        setError(null);
-        if (!isSupabaseConfigured || !supabase) {
-            setError("Supabase is not configured. Copy Frontend/.env.example to Frontend/.env and add your keys.");
-            return;
-        }
-        setRememberMe(true);
-        const { error } = await supabase.auth.signInWithOAuth({
-            provider: "google",
-            options: { redirectTo: window.location.origin },
-        });
-        if (error) setError(error.message);
     }
 
     async function handleForgotPassword() {
@@ -401,17 +376,6 @@ export default function App() {
                                 </Icon>
                             </button>
                         </form>
-
-                        <div className="my-7 flex items-center gap-4">
-                            <div className="h-px flex-1 bg-line" />
-                            <span className="text-xs font-extrabold uppercase tracking-widest text-muted">or continue with</span>
-                            <div className="h-px flex-1 bg-line" />
-                        </div>
-
-                        <button className="social-button" onClick={handleGoogle} type="button">
-                            <GoogleMark />
-                            Google
-                        </button>
 
                         <p className="mt-7 text-center text-xs leading-relaxed text-muted">
                             By continuing, you agree to our{" "}
