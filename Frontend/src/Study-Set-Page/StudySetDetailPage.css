@@ -32,6 +32,62 @@
   font-size: 0.875rem;
 }
 
+.section-heading {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.game-tiles-section {
+  margin-bottom: 32px;
+}
+
+.game-tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.game-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  padding: 16px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+  box-sizing: border-box;
+  transition:
+    border-color 0.15s,
+    transform 0.15s;
+}
+
+.study-set-detail a.game-tile {
+  color: var(--text-h);
+}
+
+a.game-tile:hover {
+  border-color: var(--accent-border);
+  transform: translateY(-2px);
+}
+
+.game-tile.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.game-tile-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
 .detail-card-list {
   list-style: none;
   margin: 0;
@@ -128,6 +184,10 @@
 }
 
 @media (max-width: 640px) {
+  .game-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .detail-fields {
     flex-direction: column;
   }
