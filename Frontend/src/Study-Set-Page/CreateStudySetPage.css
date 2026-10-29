@@ -233,3 +233,33 @@
     flex-wrap: wrap;
   }
 }
+
+.generate-panel {
+  margin: 0 0 24px;
+  padding: 16px;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+}
+
+.generate-panel h2 {
+  font-size: 1.1rem;
+  margin: 0 0 4px;
+}
+
+.generate-hint {
+  margin: 0 0 12px;
+  font-size: 0.875rem;
+}
+
+.generate-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.generate-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
