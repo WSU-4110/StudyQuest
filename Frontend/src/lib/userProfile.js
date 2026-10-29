@@ -95,3 +95,25 @@ export async function saveStudySets(studysetsId, sets) {
     throw new Error('Could not save study sets. Check that you are signed in.')
   }
 }
+
+export async function awardRewards({ xp, currency }) {
+  if (!supabase) {
+    throw new Error('Supabase is not configured.')
+  }
+
+  const { data, error } = await supabase.rpc('award_rewards', {
+    p_xp: xp,
+    p_currency: currency,
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  const totals = Array.isArray(data) ? data[0] : data
+  if (!totals) {
+    throw new Error('Could not award rewards.')
+  }
+
+  return totals
+}

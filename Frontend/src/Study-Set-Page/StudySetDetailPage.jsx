@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import { GAME_MODES, getEligibleCards } from '../Game-Page/gameModes.js'
 import { useStudySets } from './StudySetContext.jsx'
 import './StudySetDetailPage.css'
 
@@ -63,6 +64,52 @@ function CardAnswer({ card }) {
   )
 }
 
+function GameTiles({ studySet }) {
+  return (
+    <section className="game-tiles-section">
+      <h2 className="section-heading">Games</h2>
+      <ul className="game-tiles">
+        {GAME_MODES.map((mode) => {
+          const eligibleCount = getEligibleCards(mode, studySet.cards).length
+          const playable = eligibleCount >= mode.minCards
+          const content = (
+            <>
+              <img
+                className="pixel-icon"
+                src={mode.icon}
+                alt=""
+                width={48}
+                height={48}
+              />
+              <span className="game-tile-name">{mode.name}</span>
+            </>
+          )
+
+          return (
+            <li key={mode.id}>
+              {playable ? (
+                <Link
+                  className="game-tile"
+                  to={`/studysets/${studySet.id}/play/${mode.id}`}
+                >
+                  {content}
+                </Link>
+              ) : (
+                <span
+                  className="game-tile disabled"
+                  title={`Needs at least ${mode.minCards} eligible cards`}
+                >
+                  {content}
+                </span>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
+}
+
 function StudySetDetailPage() {
   const { id } = useParams()
   const { getStudySet } = useStudySets()
@@ -93,6 +140,9 @@ function StudySetDetailPage() {
         {studySet.cards.length === 1 ? 'card' : 'cards'}
       </p>
 
+      {studySet.cards.length > 0 ? <GameTiles studySet={studySet} /> : null}
+
+      <h2 className="section-heading">Cards</h2>
       <ol className="detail-card-list">
         {studySet.cards.map((card, index) => {
           const type = getCardType(card)

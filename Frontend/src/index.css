@@ -49,3 +49,7 @@ h1 {
 p {
   margin: 0;
 }
+
+.pixel-icon {
+  image-rendering: pixelated;
+}
