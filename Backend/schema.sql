@@ -46,27 +46,6 @@ create table users(
   quiz_id integer not null unique references quiz_attempts(quiz_id)
 );
 
-with d as(
-  insert into userdata(email, password)
-  values ('placeholder', 'placeholder') -- placeholders
-  returning userdata_id
-),
-s as(
-  insert into studysets default values
-  returning studysets_id
-),
-c as(
-  insert into currencycosmetics default values
-  returning currency_id
-),
-q as(
-  insert into quiz_attempts default values
-  returning quiz_id
-)
-insert into users (username, userdata_id, studysets_id, currency_id, quiz_id, auth_user_id)
-select d.userdata_id, s.studysets_id, c.currency_id, q.quiz_id, v_uid
-from d, s, c, q;
-
 -- everything together, one row per user
 select
   u.user_id,
@@ -92,6 +71,41 @@ join userdata d on d.userdata_id = u.userdata_id
 join studysets s on s.studysets_id = u.studysets_id
 join currencycosmetics c on c.currency_id = u.currency_id
 join quiz_attempts q on q.quiz_id = u.quiz_id;
+
+create or replace function public.record_quiz_result(
+  p_correct integer,
+  p_total integer
+)
+returns void
+language plpgsql
+security invoker
+set search_path = public
+as $$
+begin
+  if p_total <= 0 or p_correct < 0 or p_correct > p_total then
+    raise exception 'Quiz results must have a valid correct count and total.';
+  end if;
+
+  update public.quiz_attempts q
+  set
+    prevquiz = case when q.currdate is null then q.prevquiz else q.currquiz end,
+    prevtot = case when q.currdate is null then q.prevtot else q.currtot end,
+    prevdate = case when q.currdate is null then q.prevdate else q.currdate end,
+    currquiz = p_correct,
+    currtot = p_total,
+    currdate = now()
+  from public.users u
+  where u.quiz_id = q.quiz_id
+    and u.auth_user_id = auth.uid();
+
+  if not found then
+    raise exception 'Could not find a quiz record for the signed-in user.';
+  end if;
+end;
+$$;
+
+grant execute on function public.record_quiz_result(integer, integer)
+  to authenticated;
 
 create or replace function public.ensure_app_user(p_username text)
 returns integer
