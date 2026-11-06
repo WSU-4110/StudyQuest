@@ -15,6 +15,7 @@ function Navbar() {
           Library
         </NavLink>
         <NavLink to="/create">Create</NavLink>
+        <NavLink to="/quiz-results">Quiz Results</NavLink>
         {loading ? null : session ? (
           <button type="button" className="app-nav-button" onClick={signOut}>
             Sign out
