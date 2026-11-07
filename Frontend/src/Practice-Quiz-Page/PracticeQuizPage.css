@@ -1,0 +1,96 @@
+.practice-quiz {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.quiz-list,
+.quiz-review {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+
+.quiz-item {
+  padding: 0.75rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+}
+
+.quiz-item.correct {
+  border-color: #2e9d5b;
+}
+
+.quiz-item.incorrect {
+  border-color: #d64545;
+}
+
+.quiz-prompt {
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.quiz-choices {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.quiz-choice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.quiz-hint {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+.quiz-text-input {
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.quiz-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.quiz-score {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+}
+
+.quiz-note {
+  margin: 0.25rem 0;
+}
+
+.quiz-error {
+  margin: 0.25rem 0;
+  color: #d64545;
+}
+
+.practice-quiz input:focus-visible,
+.practice-quiz button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Used by the "Take practice quiz" link on the study set detail page. */
+.practice-quiz-link {
+  display: inline-block;
+  margin: 0.5rem 0 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  text-decoration: none;
+}

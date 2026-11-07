@@ -7,6 +7,7 @@ import { StudySetProvider } from './Study-Set-Page/StudySetContext.jsx'
 import CreateStudySetPage from './Study-Set-Page/CreateStudySetPage.jsx'
 import StudySetDetailPage from './Study-Set-Page/StudySetDetailPage.jsx'
 import StudySetLibraryPage from './Study-Set-Page/StudySetLibraryPage.jsx'
+import PracticeQuizPage from './Practice-Quiz-Page/PracticeQuizPage.jsx'
 import './App.css'
 
 function RedirectToStudySet() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/studysets/:id/edit" element={<CreateStudySetPage />} />
           <Route path="/studysets/:id" element={<StudySetDetailPage />} />
           <Route path="/studysets/:id/play" element={<RedirectToStudySet />} />
+          <Route path="/studysets/:id/quiz" element={<PracticeQuizPage />} />
           <Route
             path="/studysets/:id/play/:modeId"
             element={<GamePage />}
