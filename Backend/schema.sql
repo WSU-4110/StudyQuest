@@ -46,7 +46,9 @@ create table users(
   quiz_id integer not null unique references quiz_attempts(quiz_id)
 );
 
--- everything together, one row per user
+-- everything together, one row per user (read path for the facade)
+create or replace view public.user_overview
+with (security_invoker = true) as
 select
   u.user_id,
   u.username,
@@ -59,18 +61,19 @@ select
   c.currency,
   c.level,
   c.locker,
-  q.currQuiz, 
-  q.prevQuiz, 
-  q.currDate, 
-  q.prevDate, 
-  q.currTot, 
-  q.prevTot
-
+  q.currquiz,
+  q.prevquiz,
+  q.currdate,
+  q.prevdate,
+  q.currtot,
+  q.prevtot
 from users u
 join userdata d on d.userdata_id = u.userdata_id
 join studysets s on s.studysets_id = u.studysets_id
 join currencycosmetics c on c.currency_id = u.currency_id
 join quiz_attempts q on q.quiz_id = u.quiz_id;
+
+grant select on public.user_overview to authenticated;
 
 create or replace function public.record_quiz_result(
   p_correct integer,

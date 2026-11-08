@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../Auth-Page/AuthContext.jsx'
-import { supabase } from '../lib/supabaseClient.js'
+import { studyQuest } from '../services/studyQuestFacade.js'
 import './results.css'
 
 function QuizResultsPage() {
@@ -15,35 +15,24 @@ function QuizResultsPage() {
     let cancelled = false
 
     async function loadResults() {
-      setLoading(true)
-      setError('')
+  setLoading(true)
+  setError('')
 
-      try {
-        if (!session) {
-          throw new Error('Please sign in to see your quiz results.')
-        }
-
-        if (!supabase) {
-          throw new Error('Supabase is not configured.')
-        }
-
-        const { data: user, error: userError } = await supabase.from('users').select('quiz_id').eq('auth_user_id', session.user.id).maybeSingle()
-
-        if (userError) throw userError
-        if (!user) throw new Error('Your user profile was not found.')
-
-        const { data, error: quizError } = await supabase.from('quiz_attempts').select('currquiz, prevquiz, currtot, prevtot, currdate, prevdate').eq('quiz_id', user.quiz_id).maybeSingle()
-
-        if (quizError) throw quizError
-        if (!data) throw new Error('Your quiz results were not found.')
-
-        if (!cancelled) setResult(data)
-      } catch (err) {
-        if (!cancelled) setError(err.message ?? 'Could not load quiz results.')
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
+  try {
+    if (!session) {
+      throw new Error('Please sign in to see your quiz results.')
     }
+
+    const data = await studyQuest.quizResults()
+    if (!data) throw new Error('Your quiz results were not found.')
+
+    if (!cancelled) setResult(data)
+  } catch (err) {
+    if (!cancelled) setError(err.message ?? 'Could not load quiz results.')
+  } finally {
+    if (!cancelled) setLoading(false)
+  }
+}
 
     loadResults()
 
