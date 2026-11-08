@@ -3,20 +3,11 @@ import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../Auth-Page/AuthContext.jsx'
 import { awardRewards } from '../lib/userProfile.js'
 import { useStudySets } from '../Study-Set-Page/StudySetContext.jsx'
-import BossBattle from './BossBattle.jsx'
 import { toQuestions } from './gameEngine.js'
 import { getEligibleCards, getGameMode } from './gameModes.js'
 import ResultsScreen from './ResultsScreen.jsx'
 import { calculateRewards, MAX_XP_PER_GAME, XP_PER_LEVEL } from './rewards.js'
-import SpeedRound from './SpeedRound.jsx'
-import Survival from './Survival.jsx'
 import './GamePage.css'
-
-const MODE_COMPONENTS = {
-  'speed-round': SpeedRound,
-  survival: Survival,
-  'boss-battle': BossBattle,
-}
 
 function GamePage() {
   const { id, modeId } = useParams()
@@ -44,7 +35,7 @@ function GamePage() {
     if (awardedRoundRef.current === round) return
     awardedRoundRef.current = round
 
-    const earned = calculateRewards(mode.id, stats)
+    const earned = calculateRewards(mode, stats)
     if (earned.xp === 0) {
       setReward({ status: 'none', earned })
       return
@@ -98,7 +89,7 @@ function GamePage() {
 
   const questions = toQuestions(getEligibleCards(mode, studySet.cards))
   const playable = questions.length >= mode.minCards
-  const ModeComponent = MODE_COMPONENTS[mode.id]
+  const ModeComponent = mode.Component
 
   if (phase === 'playing' && ModeComponent) {
     return (
