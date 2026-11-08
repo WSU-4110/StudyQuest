@@ -59,3 +59,37 @@
 }
 
 
+
+.nav-player-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.nav-xp-track {
+  width: 64px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.nav-xp-bar {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s ease-out;
+}
+
+.nav-currency {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
