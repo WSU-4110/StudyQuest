@@ -15,6 +15,8 @@ jobs:
       - name: Post to Discord
         env:
           WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          # JSON map of GitHub username -> Discord user ID, set as a repo variable
+          USER_MAP: ${{ vars.DISCORD_USER_IDS || '{}' }}
           EVENT: ${{ github.event_name }}
           NUMBER: ${{ github.event.pull_request.number }}
           TITLE: ${{ github.event.pull_request.title }}
@@ -25,7 +27,10 @@ jobs:
           if [ "$EVENT" = "pull_request" ]; then
             MSG="🆕 New PR #${NUMBER} by ${AUTHOR}: ${TITLE}"
           else
-            MSG="✅ PR #${NUMBER} approved by ${REVIEWER}: ${TITLE}"
+            # Ping the PR author on Discord if they're in the map; otherwise use their GitHub name
+            AUTHOR_ID=$(jq -r --arg u "$AUTHOR" '.[$u] // empty' <<< "$USER_MAP" 2>/dev/null || true)
+            if [ -n "$AUTHOR_ID" ]; then MENTION="<@${AUTHOR_ID}>"; else MENTION="$AUTHOR"; fi
+            MSG="✅ PR #${NUMBER} approved by ${REVIEWER}: ${TITLE}"$'\n'"${MENTION}, your PR was approved!"
           fi
           jq -n --arg c "$MSG"$'\n'"$URL" '{content: $c}' \
             | curl -sf -H "Content-Type: application/json" -d @- "$WEBHOOK"
