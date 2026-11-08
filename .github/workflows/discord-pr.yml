@@ -1,0 +1,31 @@
+name: Discord PR notifications
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    # Run for new PRs, or for reviews only when the review is an approval
+    if: github.event_name == 'pull_request' || github.event.review.state == 'approved'
+    steps:
+      - name: Post to Discord
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          EVENT: ${{ github.event_name }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          TITLE: ${{ github.event.pull_request.title }}
+          AUTHOR: ${{ github.event.pull_request.user.login }}
+          REVIEWER: ${{ github.event.review.user.login }}
+          URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then
+            MSG="🆕 New PR #${NUMBER} by ${AUTHOR}: ${TITLE}"
+          else
+            MSG="✅ PR #${NUMBER} approved by ${REVIEWER}: ${TITLE}"
+          fi
+          jq -n --arg c "$MSG"$'\n'"$URL" '{content: $c}' \
+            | curl -sf -H "Content-Type: application/json" -d @- "$WEBHOOK"
