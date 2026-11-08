@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import coinIcon from '../assets/game-modes/coin.svg'
 import { formatCorrectAnswer, formatResponse } from './gameEngine.js'
 
 const TITLES = {
@@ -23,16 +22,6 @@ function RewardPanel({ reward }) {
     <div className="reward-panel">
       <div className="reward-amounts">
         <span className="reward-xp">+{reward.earned.xp} XP</span>
-        <span className="reward-coins">
-          <img
-            className="pixel-icon"
-            src={coinIcon}
-            alt=""
-            width={24}
-            height={24}
-          />
-          +{reward.earned.currency}
-        </span>
       </div>
       {reward.status === 'saving' ? <p>Saving rewards…</p> : null}
       {reward.status === 'error' ? (

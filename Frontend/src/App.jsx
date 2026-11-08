@@ -2,7 +2,6 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import Navbar from './components/Navbar.jsx'
 import AuthPage from './Auth-Page/App.jsx'
 import GamePage from './Game-Page/GamePage.jsx'
-import { PlayerStatsProvider } from './Game-Page/PlayerStatsContext.jsx'
 import HomePage from './Home-Page/HomePage.jsx'
 import { StudySetProvider } from './Study-Set-Page/StudySetContext.jsx'
 import CreateStudySetPage from './Study-Set-Page/CreateStudySetPage.jsx'
@@ -30,6 +29,7 @@ function App() {
           <Route path="/studysets/:id" element={<StudySetDetailPage />} />
           <Route path="/studysets/:id/play" element={<RedirectToStudySet />} />
           <Route path="/studysets/:id/quiz" element={<PracticeQuizPage />} />
+          <Route path="/quiz-results" element={<QuizResultsPage />} />
           <Route
             path="/studysets/:id/play/:modeId"
             element={<GamePage />}
@@ -37,31 +37,6 @@ function App() {
           <Route path="/login" element={<AuthPage />} />
         </Routes>
       </div>
-      <PlayerStatsProvider>
-        <div className="app-shell">
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/studysets" element={<StudySetLibraryPage />} />
-            <Route path="/create" element={<CreateStudySetPage />} />
-            <Route
-              path="/studysets/:id/edit"
-              element={<CreateStudySetPage />}
-            />
-            <Route path="/studysets/:id" element={<StudySetDetailPage />} />
-            <Route
-              path="/studysets/:id/play"
-              element={<RedirectToStudySet />}
-            />
-            <Route path="/quiz-results" element={<QuizResultsPage />} />
-            <Route
-              path="/studysets/:id/play/:modeId"
-              element={<GamePage />}
-            />
-            <Route path="/login" element={<AuthPage />} />
-          </Routes>
-        </div>
-      </PlayerStatsProvider>
     </StudySetProvider>
   )
 }

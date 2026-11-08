@@ -96,7 +96,7 @@ export async function saveStudySets(studysetsId, sets) {
   }
 }
 
-export async function awardRewards({ xp, currency }) {
+export async function awardRewards({ xp, currency = 0 }) {
   if (!supabase) {
     throw new Error('Supabase is not configured.')
   }
@@ -116,22 +116,4 @@ export async function awardRewards({ xp, currency }) {
   }
 
   return totals
-}
-
-export async function loadPlayerStats(authUserId) {
-  if (!supabase) {
-    throw new Error('Supabase is not configured.')
-  }
-
-  const { data, error } = await supabase
-    .from('users')
-    .select('currencycosmetics(xp, level, currency)')
-    .eq('auth_user_id', authUserId)
-    .maybeSingle()
-
-  if (error) {
-    throw new Error(error.message)
-  }
-
-  return data?.currencycosmetics ?? null
 }

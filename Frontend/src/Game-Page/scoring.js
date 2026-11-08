@@ -9,11 +9,6 @@ export function getSpeedRoundPoints(settings, { streak, msTaken }) {
 }
 
 export function getBossMaxHp(settings, questionCount) {
-  return Math.min(questionCount * settings.bossHpPerCard, settings.maxBossHp)
-}
-
-export function getBossDamage(settings, { streak }) {
-  return streak >= settings.streakForBonus
-    ? settings.damagePerHit + settings.streakDamageBonus
-    : settings.damagePerHit
+  const hp = questionCount * settings.bossHpPerCard
+  return Math.min(Math.max(hp, settings.minBossHp), settings.maxBossHp)
 }
