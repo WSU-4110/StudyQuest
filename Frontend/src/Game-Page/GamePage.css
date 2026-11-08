@@ -394,12 +394,6 @@
   color: var(--accent);
 }
 
-.reward-coins {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
 .reward-error {
   color: #d64545;
 }
@@ -462,46 +456,143 @@
   margin-top: 24px;
 }
 
-.boss-arena {
+.battle {
+  --ink: #1f1a2e;
+}
+
+.battle-scene {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: 16px;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  background: linear-gradient(#ece6ff 0%, #f7f3ff 52%, #e3f4e6 52%, #cfeccf 100%);
 }
 
-.boss-header {
+.battle-row {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 12px;
+}
+
+.battle-status {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: min(240px, 50%);
+  padding: 8px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--ink);
+  box-sizing: border-box;
+}
+
+.battle-status-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.battle-name {
   font-weight: 700;
-  color: var(--text-h);
+  color: var(--ink);
 }
 
-.boss-hp-text {
-  font-variant-numeric: tabular-nums;
+.battle-badge {
+  padding: 0 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
 }
 
-.boss-hp-track {
-  height: 12px;
-  border: 2px solid #2a1240;
+.battle-badge.danger {
+  background: #d64545;
+}
+
+.battle-badge.warning {
+  background: #c98a00;
+}
+
+.battle-badge.info {
+  background: #3a5bd9;
+}
+
+.hp-track {
+  height: 8px;
+  border: 2px solid var(--ink);
   border-radius: 4px;
   background: #e5e4e7;
   overflow: hidden;
 }
 
-.boss-hp-bar {
+.hp-fill {
   height: 100%;
-  background: linear-gradient(#b65cff, #7a1fd1);
-  transition: width 0.3s ease-out;
+  transition:
+    width 0.5s ease-out,
+    background-color 0.3s;
 }
 
-.boss-stage {
+.hp-fill.high {
+  background: #2fbf5b;
+}
+
+.hp-fill.mid {
+  background: #f2b632;
+}
+
+.hp-fill.low {
+  background: #e04848;
+}
+
+.battle-hp-text {
+  align-self: flex-end;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.sprite-spot {
   position: relative;
   display: flex;
-  justify-content: center;
-  padding: 8px 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 140px;
+}
+
+.battle-sprite {
+  position: relative;
+  z-index: 1;
+}
+
+.platform {
+  width: 140px;
+  height: 22px;
+  margin-top: -14px;
+  border-radius: 50%;
+  background: rgba(31, 26, 46, 0.18);
 }
 
 .boss-sprite {
   animation: boss-idle 1.6s ease-in-out infinite;
+}
+
+.boss-sprite.enraged {
+  filter: hue-rotate(-70deg) saturate(1.4);
+}
+
+.boss-sprite.charging {
+  animation: charge-glow 0.6s ease-in-out infinite alternate;
+}
+
+.boss-sprite.lunge {
+  animation: lunge-left 0.45s ease-out;
 }
 
 .boss-sprite.hit {
@@ -512,25 +603,127 @@
   animation: boss-defeated 1s ease-in forwards;
 }
 
+.hero-sprite.hit {
+  animation: hero-hit 0.45s ease-out;
+}
+
+.hero-sprite.healing {
+  filter: drop-shadow(0 0 8px #2fbf5b);
+}
+
+.hero-sprite.guarding {
+  filter: drop-shadow(0 0 8px #3a5bd9);
+}
+
+.hero-sprite.defeated {
+  animation: hero-defeated 0.8s ease-in forwards;
+}
+
 .damage-popup {
   position: absolute;
   top: 0;
   left: 50%;
+  z-index: 2;
   font-size: 1.5rem;
   font-weight: 700;
   color: #d64545;
+  text-shadow: 2px 2px 0 #fff;
   pointer-events: none;
-  animation: damage-float 0.7s ease-out forwards;
+  animation: damage-float 0.9s ease-out forwards;
 }
 
-.player-hearts {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
+.damage-popup.heal {
+  color: #1f9d55;
 }
 
-.player-hearts.hurt {
-  animation: shake 0.35s ease-in-out;
+.battle-textbox {
+  position: relative;
+  min-height: 4rem;
+  padding: 12px 36px 12px 16px;
+  border: 3px solid var(--ink);
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+}
+
+.battle-textbox:disabled {
+  color: var(--ink);
+  cursor: default;
+}
+
+.textbox-next {
+  position: absolute;
+  right: 14px;
+  bottom: 8px;
+  font-size: 0.75rem;
+  animation: blink 0.8s steps(2) infinite;
+}
+
+.move-menu {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.move-btn {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.move-btn:not(:disabled):hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.move-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.move-btn.attack {
+  border-left: 8px solid #e04848;
+}
+
+.move-btn.guard {
+  border-left: 8px solid #3a5bd9;
+}
+
+.move-btn.heal {
+  border-left: 8px solid #2fbf5b;
+}
+
+.move-name {
+  font-weight: 700;
+}
+
+.move-desc {
+  grid-column: 1;
+  font-size: 0.8rem;
+  color: var(--text);
+}
+
+.move-uses {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
 @keyframes boss-idle {
@@ -611,11 +804,81 @@
   }
 }
 
+@keyframes charge-glow {
+  from {
+    filter: drop-shadow(0 0 2px #ffd23f);
+  }
+  to {
+    filter: drop-shadow(0 0 12px #ffd23f) brightness(1.15);
+  }
+}
+
+@keyframes lunge-left {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  40% {
+    transform: translate(-28px, 12px);
+  }
+}
+
+@keyframes hero-hit {
+  0%,
+  100% {
+    transform: translateX(0);
+    filter: none;
+  }
+  20% {
+    transform: translateX(-6px);
+    filter: brightness(1.8) sepia(1) hue-rotate(-50deg);
+  }
+  60% {
+    transform: translateX(6px);
+  }
+}
+
+@keyframes hero-defeated {
+  to {
+    transform: translateY(16px) rotate(-90deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .boss-sprite,
-  .boss-sprite.hit,
-  .player-hearts.hurt,
+  .battle-sprite,
+  .textbox-next,
   .level-up {
-    animation: none;
+    animation: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .sprite-spot {
+    min-width: 0;
+  }
+
+  .battle-sprite.boss-sprite {
+    width: 96px;
+    height: 96px;
+  }
+
+  .battle-sprite.hero-sprite {
+    width: 72px;
+    height: 72px;
+  }
+
+  .platform {
+    width: 100px;
+  }
+
+  .move-menu {
+    grid-template-columns: 1fr;
   }
 }

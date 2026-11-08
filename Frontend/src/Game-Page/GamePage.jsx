@@ -6,9 +6,8 @@ import { useStudySets } from '../Study-Set-Page/StudySetContext.jsx'
 import BossBattle from './BossBattle.jsx'
 import { toQuestions } from './gameEngine.js'
 import { getEligibleCards, getGameMode } from './gameModes.js'
-import { usePlayerStats } from './PlayerStatsContext.jsx'
 import ResultsScreen from './ResultsScreen.jsx'
-import { calculateRewards, MAX_XP_PER_GAME } from './rewards.js'
+import { calculateRewards, MAX_XP_PER_GAME, XP_PER_LEVEL } from './rewards.js'
 import SpeedRound from './SpeedRound.jsx'
 import Survival from './Survival.jsx'
 import './GamePage.css'
@@ -23,7 +22,6 @@ function GamePage() {
   const { id, modeId } = useParams()
   const { session, loading: authLoading } = useAuth()
   const { getStudySet, loading: setsLoading } = useStudySets()
-  const { playerStats, setPlayerStats } = usePlayerStats()
   const studySet = getStudySet(id)
   const mode = getGameMode(modeId)
   const [phase, setPhase] = useState('start')
@@ -47,21 +45,21 @@ function GamePage() {
     awardedRoundRef.current = round
 
     const earned = calculateRewards(mode.id, stats)
-    if (earned.xp === 0 && earned.currency === 0) {
+    if (earned.xp === 0) {
       setReward({ status: 'none', earned })
       return
     }
 
-    const previousLevel = playerStats?.level
     setReward({ status: 'saving', earned })
     awardRewards(earned)
       .then((totals) => {
-        setPlayerStats(totals)
+        const previousLevel =
+          1 + Math.floor((totals.xp - earned.xp) / XP_PER_LEVEL)
         setReward({
           status: 'saved',
           earned,
           level: totals.level,
-          leveledUp: previousLevel != null && totals.level > previousLevel,
+          leveledUp: totals.level > previousLevel,
         })
       })
       .catch((err) => {
