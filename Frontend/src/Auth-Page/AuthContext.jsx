@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient.js'
+import { authFacade } from './AuthFacade.js'
 
 const AuthContext = createContext(null)
 
@@ -13,12 +14,12 @@ export function AuthProvider({ children }) {
       return
     }
 
-    supabase.auth.getSession().then(({ data }) => {
+    authFacade.getSession().then(({ data }) => {
       setSession(data.session)
       setLoading(false)
     })
 
-    const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data } = authFacade.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession)
       setLoading(false)
     })
@@ -28,7 +29,7 @@ export function AuthProvider({ children }) {
 
   async function signOut() {
     if (!supabase) return
-    await supabase.auth.signOut()
+    await authFacade.signOut()
   }
 
   return (
