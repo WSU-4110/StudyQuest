@@ -20,10 +20,11 @@ export const GAME_MODES = [
     id: 'speed-round',
     icon: speedRoundIcon,
     name: 'Speed Round',
+    scoreLabel: 'points',
     tagline: 'Answer as many as you can before time runs out.',
     rules: [
       '60 seconds on the clock.',
-      '+100 points per correct answer, plus up to +50 for answering fast.',
+      '+100 points per correct answer, plus up to +50 for answering within 5 seconds.',
       '3 correct in a row doubles your points until you miss.',
       'Cards reshuffle if you get through the whole set.',
     ],
@@ -31,6 +32,7 @@ export const GAME_MODES = [
       durationSeconds: 60,
       pointsPerCorrect: 100,
       maxSpeedBonus: 50,
+      speedBonusWindowMs: 5000,
       streakForMultiplier: 3,
       streakMultiplier: 2,
     },
@@ -41,6 +43,7 @@ export const GAME_MODES = [
     id: 'survival',
     icon: survivalIcon,
     name: 'Survival',
+    scoreLabel: 'correct answers',
     tagline: 'No timer. Three lives. How far can you go?',
     rules: [
       'You start with 3 lives.',
@@ -58,9 +61,10 @@ export const GAME_MODES = [
     id: 'boss-battle',
     icon: bossBattleIcon,
     name: 'Boss Battle',
+    scoreLabel: 'damage dealt',
     tagline: 'Defeat the boss with correct answers.',
     rules: [
-      'The boss has 100 HP for every card in the set.',
+      'The boss has 100 HP for every card in the set (up to 2,000 HP).',
       'Correct answers deal 100 damage, +50 while on a 3-answer streak.',
       'Wrong answers cost you 1 of your 5 hearts.',
       'Win by bringing the boss to 0 HP before your hearts run out.',
@@ -68,6 +72,7 @@ export const GAME_MODES = [
     settings: {
       playerHearts: 5,
       bossHpPerCard: 100,
+      maxBossHp: 2000,
       damagePerHit: 100,
       streakDamageBonus: 50,
       streakForBonus: 3,
@@ -79,6 +84,7 @@ export const GAME_MODES = [
     id: 'memory-flip',
     icon: memoryFlipIcon,
     name: 'Memory Flip',
+    scoreLabel: 'points',
     tagline: 'Flip tiles to match each question with its answer.',
     rules: [
       'Tiles start face down. Flip two at a time.',

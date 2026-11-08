@@ -1,35 +1,88 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../Auth-Page/AuthContext.jsx'
 import { awardRewards } from '../lib/userProfile.js'
 import { useStudySets } from '../Study-Set-Page/StudySetContext.jsx'
+import BossBattle from './BossBattle.jsx'
+import { toQuestions } from './gameEngine.js'
 import { getEligibleCards, getGameMode } from './gameModes.js'
-import { MAX_XP_PER_GAME } from './rewards.js'
+import { usePlayerStats } from './PlayerStatsContext.jsx'
+import ResultsScreen from './ResultsScreen.jsx'
+import { calculateRewards, MAX_XP_PER_GAME } from './rewards.js'
+import SpeedRound from './SpeedRound.jsx'
+import Survival from './Survival.jsx'
 import './GamePage.css'
+
+const MODE_COMPONENTS = {
+  'speed-round': SpeedRound,
+  survival: Survival,
+  'boss-battle': BossBattle,
+}
 
 function GamePage() {
   const { id, modeId } = useParams()
-  const { session } = useAuth()
-  const { getStudySet, loading } = useStudySets()
+  const { session, loading: authLoading } = useAuth()
+  const { getStudySet, loading: setsLoading } = useStudySets()
+  const { playerStats, setPlayerStats } = usePlayerStats()
   const studySet = getStudySet(id)
   const mode = getGameMode(modeId)
-  const [testResult, setTestResult] = useState(null)
+  const [phase, setPhase] = useState('start')
+  const [round, setRound] = useState(0)
+  const [result, setResult] = useState(null)
+  const [reward, setReward] = useState(null)
+  const awardedRoundRef = useRef(0)
 
-  async function handleTestRewards() {
-    try {
-      const totals = await awardRewards({ xp: 10, currency: 2 })
-      setTestResult(
-        `XP ${totals.xp} · Level ${totals.level} · Currency ${totals.currency}`,
-      )
-    } catch (err) {
-      setTestResult(err.message ?? 'Failed to award rewards.')
-    }
+  function startRound() {
+    setResult(null)
+    setReward(null)
+    setRound((prev) => prev + 1)
+    setPhase('playing')
   }
 
-  if (loading) {
+  function finishRound(stats) {
+    setResult(stats)
+    setPhase('finished')
+
+    if (awardedRoundRef.current === round) return
+    awardedRoundRef.current = round
+
+    const earned = calculateRewards(mode.id, stats)
+    if (earned.xp === 0 && earned.currency === 0) {
+      setReward({ status: 'none', earned })
+      return
+    }
+
+    const previousLevel = playerStats?.level
+    setReward({ status: 'saving', earned })
+    awardRewards(earned)
+      .then((totals) => {
+        setPlayerStats(totals)
+        setReward({
+          status: 'saved',
+          earned,
+          level: totals.level,
+          leveledUp: previousLevel != null && totals.level > previousLevel,
+        })
+      })
+      .catch((err) => {
+        setReward({ status: 'error', earned, error: err.message })
+      })
+  }
+
+  if (authLoading || setsLoading) {
     return (
       <main className="game-page">
         <p>Loading study set…</p>
+      </main>
+    )
+  }
+
+  if (!session) {
+    return (
+      <main className="game-page">
+        <p>
+          <Link to="/login">Sign in</Link> to play games with your study sets.
+        </p>
       </main>
     )
   }
@@ -45,8 +98,36 @@ function GamePage() {
     )
   }
 
-  const eligibleCount = getEligibleCards(mode, studySet.cards).length
-  const playable = eligibleCount >= mode.minCards
+  const questions = toQuestions(getEligibleCards(mode, studySet.cards))
+  const playable = questions.length >= mode.minCards
+  const ModeComponent = MODE_COMPONENTS[mode.id]
+
+  if (phase === 'playing' && ModeComponent) {
+    return (
+      <main className="game-page">
+        <ModeComponent
+          key={round}
+          questions={questions}
+          settings={mode.settings}
+          onFinish={finishRound}
+        />
+      </main>
+    )
+  }
+
+  if (phase === 'finished' && result) {
+    return (
+      <main className="game-page">
+        <ResultsScreen
+          result={result}
+          mode={mode}
+          reward={reward}
+          studySetId={studySet.id}
+          onPlayAgain={startRound}
+        />
+      </main>
+    )
+  }
 
   return (
     <main className="game-page">
@@ -78,27 +159,21 @@ function GamePage() {
           <p className="start-reward">Earn up to {MAX_XP_PER_GAME} XP</p>
         </div>
 
-        {playable ? (
-          <button type="button" className="start-btn" disabled>
-            Start (coming soon)
-          </button>
-        ) : (
+        {!playable ? (
           <p>
             This mode needs at least {mode.minCards} eligible cards (this set
-            has {eligibleCount}).
+            has {questions.length}).
           </p>
+        ) : ModeComponent ? (
+          <button type="button" className="start-btn" onClick={startRound}>
+            Start
+          </button>
+        ) : (
+          <button type="button" className="start-btn" disabled>
+            Coming soon
+          </button>
         )}
       </section>
-
-      {import.meta.env.DEV && session ? (
-        <div className="dev-panel">
-          <p>Dev only: award 10 XP and 2 currency to test award_rewards.</p>
-          <button type="button" onClick={handleTestRewards}>
-            Test awardRewards
-          </button>
-          {testResult ? <p>{testResult}</p> : null}
-        </div>
-      ) : null}
     </main>
   )
 }

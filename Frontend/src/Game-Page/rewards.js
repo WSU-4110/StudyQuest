@@ -1,6 +1,7 @@
 // Must match the caps in public.award_rewards (Backend/schema.sql).
 export const MAX_XP_PER_GAME = 500
 export const MAX_CURRENCY_PER_GAME = 100
+export const XP_PER_LEVEL = 500
 
 function clamp(value, max) {
   return Math.min(Math.max(Math.floor(value), 0), max)

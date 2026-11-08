@@ -117,3 +117,21 @@ export async function awardRewards({ xp, currency }) {
 
   return totals
 }
+
+export async function loadPlayerStats(authUserId) {
+  if (!supabase) {
+    throw new Error('Supabase is not configured.')
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('currencycosmetics(xp, level, currency)')
+    .eq('auth_user_id', authUserId)
+    .maybeSingle()
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return data?.currencycosmetics ?? null
+}
