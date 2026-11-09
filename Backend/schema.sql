@@ -1,4 +1,4 @@
-drop function if exists public.ensure_app_user(text);
+﻿drop function if exists public.ensure_app_user(text);
 drop table if exists users, userdata, studysets, currencycosmetics, quiz_attempts cascade;
 
 --user data
@@ -47,6 +47,28 @@ create table users(
   quiz_id integer not null unique references quiz_attempts(quiz_id)
 );
 
+-- Track completed activities that have received rewards.
+-- A completion ID can only receive rewards once.
+create table if not exists public.reward_completions (
+  completion_id uuid primary key,
+  auth_user_id uuid not null
+    references auth.users(id) on delete cascade,
+  activity_type text not null
+    check (activity_type in ('quiz', 'game')),
+  xp_awarded integer not null check (xp_awarded >= 0),
+  currency_awarded integer not null check (currency_awarded >= 0),
+  completed_at timestamptz not null default now()
+);
+
+create index if not exists reward_completions_user_idx
+  on public.reward_completions(auth_user_id);
+
+alter table public.reward_completions
+  enable row level security;
+
+revoke all on table public.reward_completions
+  from public, anon, authenticated;
+
 -- everything together, one row per user
 select
   u.user_id,
@@ -58,6 +80,7 @@ select
   s.sets as studysets,
   c.currency_id,
   c.currency,
+  c.xp,
   c.level,
   c.locker,
   q.currQuiz, 
@@ -221,7 +244,8 @@ create policy currencycosmetics_select_own on currencycosmetics
   for select using (
     currency_id in (select currency_id from users where auth_user_id = auth.uid())
   );
--- No update policy: currency/xp/level only change through award_rewards().
+-- No direct update policy: XP, currency, and level are managed by
+-- database reward functions.
 create policy quiz_attempts_select_own on quiz_attempts
   for select using (
     quiz_id in (select quiz_id from users where auth_user_id = auth.uid())
@@ -274,4 +298,85 @@ begin
 end;
 $$;
 
-grant execute on function public.award_rewards(integer, integer) to authenticated;
+revoke execute on function public.award_rewards(integer, integer)
+  from public, anon, authenticated;
+
+-- Award XP and currency once per completion ID.
+-- The frontend must provide a completion ID for each activity.
+create or replace function public.award_activity_rewards(
+  p_completion_id uuid,
+  p_activity_type text,
+  p_xp integer,
+  p_currency integer
+)
+returns table (
+  xp integer,
+  level integer,
+  currency integer
+)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid uuid := auth.uid();
+begin
+  if v_uid is null then
+    raise exception 'Not authenticated';
+  end if;
+
+  if p_completion_id is null
+     or p_activity_type is null
+     or p_activity_type not in ('quiz', 'game') then
+    raise exception 'Invalid activity';
+  end if;
+
+  if p_xp is null or p_currency is null
+     or p_xp < 0 or p_currency < 0
+     or p_xp > 500 or p_currency > 100 then
+    raise exception 'Invalid reward amounts';
+  end if;
+
+  insert into public.reward_completions (
+    completion_id,
+    auth_user_id,
+    activity_type,
+    xp_awarded,
+    currency_awarded
+  )
+  values (
+    p_completion_id,
+    v_uid,
+    p_activity_type,
+    p_xp,
+    p_currency
+  )
+  on conflict (completion_id) do nothing;
+
+  if not found then
+    raise exception 'Rewards already claimed for this completion';
+  end if;
+
+  return query
+  update public.currencycosmetics as c
+  set xp = c.xp + p_xp,
+      currency = c.currency + p_currency,
+      level = 1 + (c.xp + p_xp) / 500
+  from public.users as u
+  where u.auth_user_id = v_uid
+    and c.currency_id = u.currency_id
+  returning c.xp, c.level, c.currency;
+
+  if not found then
+    raise exception 'No profile found for this user';
+  end if;
+end;
+$$;
+
+revoke all on function public.award_activity_rewards(
+  uuid, text, integer, integer
+) from public, anon;
+
+grant execute on function public.award_activity_rewards(
+  uuid, text, integer, integer
+) to authenticated;

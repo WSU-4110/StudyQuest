@@ -75,3 +75,25 @@
   gap: 15px;
   margin-top: 4rem;
 }
+
+/* Player XP, level, and currency display */
+.player-rewards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  margin: 20px auto;
+  padding: 15px 25px;
+  width: fit-content;
+  background-color: #2b2250;
+  border: 1px solid #7653ad;
+  border-radius: 12px;
+  color: #ffffff;
+}
+
+.player-rewards p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #ffffff;
+}

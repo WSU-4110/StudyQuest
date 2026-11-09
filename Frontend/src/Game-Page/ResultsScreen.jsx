@@ -18,18 +18,51 @@ function RewardPanel({ reward }) {
     )
   }
 
+  if (reward.status === 'saving') {
+    return (
+      <div className="reward-panel">
+        <p>Saving rewards...</p>
+      </div>
+    )
+  }
+
+  if (reward.status === 'error') {
+    return (
+      <div className="reward-panel">
+        <p className="reward-error">
+          Couldn't save rewards: {reward.error}
+        </p>
+      </div>
+    )
+  }
+
+  if (reward.status !== 'saved') return null
+
   return (
     <div className="reward-panel">
+      <h2>Rewards Earned</h2>
+
       <div className="reward-amounts">
-        <span className="reward-xp">+{reward.earned.xp} XP</span>
+        <span className="reward-xp">
+          +{reward.earned.xp} XP
+        </span>
+        <span className="reward-currency">
+          +{reward.earned.currency} Coins
+        </span>
       </div>
-      {reward.status === 'saving' ? <p>Saving rewards…</p> : null}
-      {reward.status === 'error' ? (
-        <p className="reward-error">Couldn't save rewards: {reward.error}</p>
-      ) : null}
-      {reward.status === 'saved' && reward.leveledUp ? (
-        <p className="level-up">Level up! You're now level {reward.level}.</p>
-      ) : null}
+
+      <div className="reward-totals">
+        <h3>Your Current Stats</h3>
+        <p>Total XP: {reward.xp}</p>
+        <p>Level: {reward.level}</p>
+        <p>Total Coins: {reward.currency}</p>
+
+        {reward.leveledUp && (
+          <p className="level-up">
+            Level up! You're now level {reward.level}!
+          </p>
+        )}
+      </div>
     </div>
   )
 }
