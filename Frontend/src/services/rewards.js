@@ -63,6 +63,9 @@ export async function awardRewards(activity, earned = {}, completionId) {
     throw new Error('Could not award rewards')
   }
 
+  // Notify the navbar that XP and coins have changed.
+  window.dispatchEvent(new Event('studyquest:rewards-updated'))
+
   return totals
 }
 
