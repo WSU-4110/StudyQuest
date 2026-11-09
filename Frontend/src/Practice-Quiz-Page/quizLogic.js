@@ -1,4 +1,6 @@
 // Pure quiz helpers: no React, no Supabase. Works on cards from studysets.sets.
+// Scoring/formatting now lives in scoringStrategies.js (Strategy pattern).
+import { defaultScorer } from './ScoringStrategies.js'
 
 export function getCardType(card) {
   return card.type ?? 'short_answer'
@@ -46,57 +48,15 @@ export function generateQuiz(studySet, { shuffle = false } = {}) {
   return questions
 }
 
-const normalize = (value) => String(value ?? '').trim().toLowerCase()
+// Same exports as before, so PracticeQuizPage.jsx needs no changes.
+export const isCorrect = (question, response) =>
+  defaultScorer.isCorrect(question, response)
 
-export function isCorrect(question, response) {
-  switch (question.type) {
-    case 'short_answer':
-      return normalize(response) === normalize(question.answer)
-    case 'true_false':
-      return response === question.answer
-    case 'multiple_choice': {
-      const picked = [...(response ?? [])].sort((a, b) => a - b)
-      const correct = [...question.correctIndexes].sort((a, b) => a - b)
-      return (
-        picked.length === correct.length &&
-        picked.every((value, i) => value === correct[i])
-      )
-    }
-    default:
-      return false
-  }
-}
+export const formatCorrectAnswer = (question) =>
+  defaultScorer.formatCorrectAnswer(question)
 
-export function formatCorrectAnswer(question) {
-  if (question.type === 'true_false') return question.answer ? 'True' : 'False'
-  if (question.type === 'multiple_choice') {
-    return question.correctIndexes.map((i) => question.options[i]).join(', ')
-  }
-  return question.answer
-}
+export const formatResponse = (question, response) =>
+  defaultScorer.formatResponse(question, response)
 
-export function formatResponse(question, response) {
-  if (response === undefined || response === null || response === '') {
-    return 'No answer'
-  }
-  if (question.type === 'true_false') return response ? 'True' : 'False'
-  if (question.type === 'multiple_choice') {
-    return response.length
-      ? response.map((i) => question.options[i]).join(', ')
-      : 'No answer'
-  }
-  return String(response)
-}
-
-// responses: { [questionId]: string | boolean | number[] }
-export function scoreQuiz(questions, responses) {
-  const results = questions.map((question) => ({
-    question,
-    response: responses[question.id],
-    correct: isCorrect(question, responses[question.id]),
-  }))
-  const score = results.filter((r) => r.correct).length
-  const total = questions.length
-  const percent = total ? Math.round((score / total) * 100) : 0
-  return { score, total, percent, results }
-}
+export const scoreQuiz = (questions, responses) =>
+  defaultScorer.scoreQuiz(questions, responses)
