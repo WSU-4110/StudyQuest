@@ -1,4 +1,4 @@
-// Must match the caps in public.award_rewards (Backend/schema.sql).
+// XP cap must match public.award_activity_rewards (Backend/schema.sql).
 export const MAX_XP_PER_GAME = 500
 export const XP_PER_LEVEL = 500
 

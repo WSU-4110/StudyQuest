@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css?family=Bungee+Shade');
 @import url('https://fonts.googleapis.com/css?family=Bungee');
 
@@ -56,4 +55,92 @@
 
 .app-nav-button:hover {
   color: var(--text);
+}
+
+/* XP progress and coins in the navbar */
+
+.nav-rewards {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-right: 12px;
+}
+
+.nav-xp {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 170px;
+}
+
+.nav-xp-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-h);
+  white-space: nowrap;
+}
+
+.nav-xp-track {
+  width: 100%;
+  height: 10px;
+  background-color: #ded9e9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.nav-xp-fill {
+  height: 100%;
+  background-color: #35c759;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.nav-coins {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-h);
+  white-space: nowrap;
+}
+
+.nav-coins img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+/* Keep the navbar usable on smaller screens */
+@media (max-width: 900px) {
+  .app-nav {
+    flex-wrap: wrap;
+  }
+
+  .app-nav-right {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .nav-rewards {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .app-nav-brand {
+    font-size: 1.5rem;
+  }
+
+  .nav-xp {
+    width: 130px;
+  }
+
+  .app-nav-right {
+    gap: 12px;
+  }
 }

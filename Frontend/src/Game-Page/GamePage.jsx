@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../Auth-Page/AuthContext.jsx'
-import { awardRewards } from '../lib/userProfile.js'
+import { awardRewards, REWARD_AMOUNTS } from '../services/rewards.js'
 import { useStudySets } from '../Study-Set-Page/StudySetContext.jsx'
 import BossBattle from './BossBattle.jsx'
 import { toQuestions } from './gameEngine.js'
@@ -29,8 +29,11 @@ function GamePage() {
   const [result, setResult] = useState(null)
   const [reward, setReward] = useState(null)
   const awardedRoundRef = useRef(0)
+  const completionIdRef = useRef(null)
 
   function startRound() {
+    completionIdRef.current = crypto.randomUUID()
+
     setResult(null)
     setReward(null)
     setRound((prev) => prev + 1)
@@ -50,15 +53,24 @@ function GamePage() {
       return
     }
 
+
     setReward({ status: 'saving', earned })
-    awardRewards(earned)
+
+    awardRewards('game', earned, completionIdRef.current)
       .then((totals) => {
         const previousLevel =
           1 + Math.floor((totals.xp - earned.xp) / XP_PER_LEVEL)
+
         setReward({
           status: 'saved',
-          earned,
+          earned: {
+            xp: earned.xp,
+            currency: REWARD_AMOUNTS.game.currency,
+          },
+          xp: totals.xp,
           level: totals.level,
+          currency: totals.currency,
+
           leveledUp: totals.level > previousLevel,
         })
       })
