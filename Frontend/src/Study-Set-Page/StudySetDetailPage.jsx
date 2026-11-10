@@ -140,6 +140,15 @@ function StudySetDetailPage() {
         {studySet.cards.length === 1 ? 'card' : 'cards'}
       </p>
 
+      {studySet.cards.length > 0 ? (
+        <Link
+          className="practice-quiz-link"
+          to={`/studysets/${studySet.id}/quiz`}
+        >
+          Take practice quiz
+        </Link>
+      ) : null}
+      
       {studySet.cards.length > 0 ? <GameTiles studySet={studySet} /> : null}
 
       <h2 className="section-heading">Cards</h2>
