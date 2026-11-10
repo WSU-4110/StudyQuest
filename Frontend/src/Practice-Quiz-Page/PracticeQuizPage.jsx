@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../Auth-Page/AuthContext.jsx'
 import { supabase } from '../lib/supabaseClient.js'
-import { awardRewards } from '../lib/userProfile.js'
+import { awardRewards, REWARD_AMOUNTS } from '../services/rewards.js'
 import { useStudySets } from '../Study-Set-Page/StudySetContext.jsx'
 import {
   formatCorrectAnswer,
@@ -12,9 +12,6 @@ import {
 } from './quizLogic.js'
 import './PracticeQuizPage.css'
 
-// Reward amounts per correct answer. Change these to match the rewards design.
-const XP_PER_CORRECT = 10
-const CURRENCY_PER_CORRECT = 5
 
 async function recordQuizResult(correct, total) {
   const { error } = await supabase.rpc('record_quiz_result', {
@@ -90,6 +87,7 @@ function PracticeQuizPage() {
   const { session } = useAuth()
   const { getStudySet, loading } = useStudySets()
   const studySet = getStudySet(id)
+  const [completionId, setCompletionId] = useState(() => crypto.randomUUID())
 
   const [attempt, setAttempt] = useState(0)
   const [responses, setResponses] = useState({})
@@ -156,12 +154,10 @@ function PracticeQuizPage() {
         status.errors.push(`Could not save your result: ${err.message}`)
       }
 
-      const xp = scored.score * XP_PER_CORRECT
-      const currency = scored.score * CURRENCY_PER_CORRECT
-      if (xp > 0 || currency > 0) {
+      if (scored.score > 0) {
         try {
-          await awardRewards({ xp, currency })
-          status.rewards = { xp, currency }
+          await awardRewards('quiz', {}, completionId)
+          status.rewards = REWARD_AMOUNTS.quiz
         } catch (err) {
           status.errors.push(`Could not award rewards: ${err.message}`)
         }
@@ -173,6 +169,7 @@ function PracticeQuizPage() {
   }
 
   function handleRetake() {
+    setCompletionId(crypto.randomUUID())
     setResponses({})
     setResult(null)
     setSaveStatus(null)
