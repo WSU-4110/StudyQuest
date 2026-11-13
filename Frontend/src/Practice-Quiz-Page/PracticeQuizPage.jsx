@@ -148,10 +148,31 @@ function PracticeQuizPage() {
 
     if (session) {
       try {
-        await recordQuizResult(scored.score, scored.total)
+        if (!supabase) {
+          throw new Error('Supabase is not configured.')
+        }
+
+        const { error } = await supabase.from('game_attempts').insert({
+          attempt_id: completionId,
+          auth_user_id: session.user.id,
+          study_set_id: studySet.id,
+          study_set_title: studySet.title,
+          mode_id: 'practice-quiz',
+          score: scored.percent,
+          correct: scored.score,
+          total: scored.total,
+        })
+
+        if (error) throw error
         status.saved = true
       } catch (err) {
-        status.errors.push(`Could not save your result: ${err.message}`)
+        status.errors.push(`Could not save your practice quiz: ${err.message}`)
+      }
+
+      try {
+        await recordQuizResult(scored.score, scored.total)
+      } catch (err) {
+        status.errors.push(`Could not update your quiz summary: ${err.message}`)
       }
 
       if (scored.score > 0) {
