@@ -97,7 +97,7 @@ function MissedList({ missed }) {
   )
 }
 
-function ResultsScreen({ result, mode, reward, studySetId, onPlayAgain }) {
+function ResultsScreen({ result, mode, reward, resultSave, studySetId, onPlayAgain }) {
   const accuracy = result.answered
     ? Math.round((result.correct / result.answered) * 100)
     : 0
@@ -116,6 +116,12 @@ function ResultsScreen({ result, mode, reward, studySetId, onPlayAgain }) {
             : 'Personal best set! Beat it next time.'}
         </p>
       ) : null}
+
+      {resultSave?.status === 'saving' && <p>Saving game result...</p>}
+      {resultSave?.status === 'saved' && <p>Game result saved.</p>}
+      {resultSave?.status === 'error' && (
+        <p role="alert">Could not save game result: {resultSave.message}</p>
+      )}
 
       <dl className="summary-stats">
         <div>

@@ -5,7 +5,7 @@ import './results.css'
 
 function QuizResultsPage() {
   const { session, loading: authLoading } = useAuth()
-  const [result, setResult] = useState(null)
+  const [results, setResults] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -20,26 +20,26 @@ function QuizResultsPage() {
 
       try {
         if (!session) {
-          throw new Error('Please sign in to see your quiz results.')
+          throw new Error('Please sign in to see your game results.')
         }
 
         if (!supabase) {
           throw new Error('Supabase is not configured.')
         }
 
-        const { data: user, error: userError } = await supabase.from('users').select('quiz_id').eq('auth_user_id', session.user.id).maybeSingle()
+        const { data, error: queryError } = await supabase
+          .from('game_attempts')
+          .select('attempt_id, study_set_title, mode_id, score, correct, total, completed_at')
+          .order('completed_at', { ascending: false })
+          .limit(50)
 
-        if (userError) throw userError
-        if (!user) throw new Error('Your user profile was not found.')
+        if (queryError) throw queryError
 
-        const { data, error: quizError } = await supabase.from('quiz_attempts').select('currquiz, prevquiz, currtot, prevtot, currdate, prevdate').eq('quiz_id', user.quiz_id).maybeSingle()
-
-        if (quizError) throw quizError
-        if (!data) throw new Error('Your quiz results were not found.')
-
-        if (!cancelled) setResult(data)
+        if (!cancelled) setResults(data ?? [])
       } catch (err) {
-        if (!cancelled) setError(err.message ?? 'Could not load quiz results.')
+        if (!cancelled) {
+          setError(err.message ?? 'Could not load game results.')
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -52,33 +52,48 @@ function QuizResultsPage() {
     }
   }, [session, authLoading])
 
-  if (loading) {
-    return <main className="quizresults-page"><p>Loading results…</p></main>
+  if (authLoading || loading) {
+    return (
+      <main className="quizresults-page">
+        <p>Loading results...</p>
+      </main>
+    )
   }
 
   if (error) {
-    return <main className="quizresults-page"><h1>Quiz Results</h1><p>{error}</p></main>
+    return (
+      <main className="quizresults-page">
+        <h1>Quiz Results</h1>
+        <p role="alert">{error}</p>
+      </main>
+    )
   }
-
-  const hasCurrentResult = Number(result.currtot) > 0
-  const hasPreviousResult = Number(result.prevtot) > 0
 
   return (
     <main className="quizresults-page">
       <h1>Quiz Results</h1>
 
-      <h2>Most recent quiz</h2>
-      {hasCurrentResult ? (
-        <p>{result.currquiz} correct out of {result.currtot}</p>
+      {results.length === 0 ? (
+        <p>No game results saved yet.</p>
       ) : (
-        <p>No quiz results saved yet.</p>
-      )}
-
-      <h2>Previous quiz</h2>
-      {hasPreviousResult ? (
-        <p>{result.prevquiz} correct out of {result.prevtot}</p>
-      ) : (
-        <p>No previous quiz results.</p>
+        <ol>
+          {results.map((result) => (
+            <li key={result.attempt_id}>
+              <h2>
+                {result.study_set_title} —{' '}
+                {result.mode_id === 'practice-quiz'
+                  ? 'Practice quiz'
+                  : result.mode_id}
+              </h2>
+              <p>
+                Score: {result.score}; correct: {result.correct} of {result.total}
+              </p>
+              <time dateTime={result.completed_at}>
+                {new Date(result.completed_at).toLocaleString()}
+              </time>
+            </li>
+          ))}
+        </ol>
       )}
     </main>
   )
