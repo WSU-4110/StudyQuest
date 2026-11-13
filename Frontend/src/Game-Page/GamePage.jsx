@@ -4,7 +4,11 @@ import { useAuth } from '../Auth-Page/AuthContext.jsx'
 import { awardRewards, REWARD_AMOUNTS } from '../services/rewards.js'
 import { useStudySets } from '../Study-Set-Page/StudySetContext.jsx'
 import BossBattle from './BossBattle.jsx'
-import { toQuestions } from './gameEngine.js'
+import {
+  formatCorrectAnswer,
+  formatResponse,
+  toQuestions,
+} from './gameEngine.js'
 import { getEligibleCards, getGameMode } from './gameModes.js'
 import ResultsScreen from './ResultsScreen.jsx'
 import { calculateRewards, MAX_XP_PER_GAME, XP_PER_LEVEL } from './rewards.js'
@@ -60,6 +64,11 @@ function GamePage() {
       score: stats.score,
       correct: stats.correct,
       total: stats.answered,
+      missed_questions: stats.missed.map(({ question, response }) => ({
+        question: question.prompt,
+        correctAnswer: formatCorrectAnswer(question),
+        yourAnswer: formatResponse(question, response),
+      })),
     })
 
     if (error) throw error

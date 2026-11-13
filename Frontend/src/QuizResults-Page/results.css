@@ -7,3 +7,50 @@
     text-align: left;
     box-sizing: border-box;
 }
+
+.quizresults-page ol {
+    padding-left: 24px;
+}
+
+.quizresults-page ol > li {
+    margin-bottom: 20px;
+}
+
+.result-tips {
+    margin-top: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+.result-tips button {
+    margin-top: 8px;
+    padding: 7px 12px;
+    border: 1px solid var(--accent-border);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    color: var(--text-h);
+    font: inherit;
+    cursor: pointer;
+}
+
+.result-tips button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.result-tips h3 {
+    margin: 0 0 8px;
+    color: var(--text-h);
+    font-size: 1rem;
+}
+
+.result-tips ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.result-tips li + li {
+    margin-top: 8px;
+}
