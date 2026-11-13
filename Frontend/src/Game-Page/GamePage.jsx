@@ -11,6 +11,7 @@ import { calculateRewards, MAX_XP_PER_GAME, XP_PER_LEVEL } from './rewards.js'
 import SpeedRound from './SpeedRound.jsx'
 import Survival from './Survival.jsx'
 import './GamePage.css'
+import { supabase } from '../lib/supabaseClient.js'
 
 const MODE_COMPONENTS = {
   'speed-round': SpeedRound,
@@ -30,15 +31,47 @@ function GamePage() {
   const [reward, setReward] = useState(null)
   const awardedRoundRef = useRef(0)
   const completionIdRef = useRef(null)
+  const [resultSave, setResultSave] = useState(null)
 
   function startRound() {
     completionIdRef.current = crypto.randomUUID()
 
     setResult(null)
     setReward(null)
+    setResultSave(null)
     setRound((prev) => prev + 1)
     setPhase('playing')
   }
+
+  async function saveGameResult(stats) {
+  setResultSave({ status: 'saving' })
+
+  try {
+    if (!supabase) {
+      throw new Error('Supabase is not configured.')
+    }
+
+    const { error } = await supabase.from('game_attempts').insert({
+      attempt_id: completionIdRef.current,
+      auth_user_id: session.user.id,
+      study_set_id: studySet.id,
+      study_set_title: studySet.title,
+      mode_id: mode.id,
+      score: stats.score,
+      correct: stats.correct,
+      total: stats.answered,
+    })
+
+    if (error) throw error
+
+    setResultSave({ status: 'saved' })
+  } catch (error) {
+    setResultSave({
+      status: 'error',
+      message: error.message ?? 'Could not save this game result.',
+    })
+  }
+}
 
   function finishRound(stats) {
     setResult(stats)
@@ -46,6 +79,8 @@ function GamePage() {
 
     if (awardedRoundRef.current === round) return
     awardedRoundRef.current = round
+
+    void saveGameResult(stats)
 
     const earned = calculateRewards(mode.id, stats)
     if (earned.xp === 0) {
@@ -132,6 +167,7 @@ function GamePage() {
           result={result}
           mode={mode}
           reward={reward}
+          resultSave={resultSave}
           studySetId={studySet.id}
           onPlayAgain={startRound}
         />

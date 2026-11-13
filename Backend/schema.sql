@@ -69,6 +69,34 @@ alter table public.reward_completions
 revoke all on table public.reward_completions
   from public, anon, authenticated;
 
+create table if not exists public.game_attempts (
+  attempt_id uuid primary key,
+  auth_user_id uuid not null references auth.users(id) on delete cascade,
+  study_set_id text not null,
+  study_set_title text not null,
+  mode_id text not null,
+  score integer not null,
+  correct integer not null,
+  total integer not null,
+  completed_at timestamptz not null default now(),
+  constraint game_attempts_counts_valid
+    check (correct >= 0 and total >= 0)
+);
+
+alter table public.game_attempts enable row level security;
+
+grant select, insert on public.game_attempts to authenticated;
+
+drop policy if exists game_attempts_select_own on public.game_attempts;
+create policy game_attempts_select_own on public.game_attempts
+  for select to authenticated
+  using (auth_user_id = auth.uid());
+
+drop policy if exists game_attempts_insert_own on public.game_attempts;
+create policy game_attempts_insert_own on public.game_attempts
+  for insert to authenticated
+  with check (auth_user_id = auth.uid());
+
 -- everything together, one row per user
 select
   u.user_id,
@@ -205,6 +233,9 @@ alter table userdata enable row level security;
 alter table studysets enable row level security;
 alter table currencycosmetics enable row level security;
 alter table quiz_attempts enable row level security;
+
+alter table public.currencycosmetics
+add column if not exists xp integer not null default 0;
 
 drop policy if exists users_select_own on users;
 drop policy if exists users_update_own on users;
