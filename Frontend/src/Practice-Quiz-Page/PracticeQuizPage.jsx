@@ -161,6 +161,13 @@ function PracticeQuizPage() {
           score: scored.percent,
           correct: scored.score,
           total: scored.total,
+          missed_questions: scored.results
+            .filter(({ correct }) => !correct)
+            .map(({ question, response }) => ({
+              question: question.prompt,
+              correctAnswer: formatCorrectAnswer(question),
+              yourAnswer: formatResponse(question, response),
+            })),
         })
 
         if (error) throw error

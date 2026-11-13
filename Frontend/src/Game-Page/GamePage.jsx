@@ -3,7 +3,11 @@ import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../Auth-Page/AuthContext.jsx'
 import { awardRewards, REWARD_AMOUNTS } from '../services/rewards.js'
 import { useStudySets } from '../Study-Set-Page/StudySetContext.jsx'
-import { toQuestions } from './gameEngine.js'
+import {
+  formatCorrectAnswer,
+  formatResponse,
+  toQuestions,
+} from './gameEngine.js'
 import { getEligibleCards, getGameMode } from './gameModes.js'
 import PairCountPicker from './PairCountPicker.jsx'
 import ResultsScreen from './ResultsScreen.jsx'
@@ -54,6 +58,11 @@ function GamePage() {
       score: stats.score,
       correct: stats.correct,
       total: stats.answered,
+      missed_questions: stats.missed.map(({ question, response }) => ({
+        question: question.prompt,
+        correctAnswer: formatCorrectAnswer(question),
+        yourAnswer: formatResponse(question, response),
+      })),
     })
 
     if (error) throw error
