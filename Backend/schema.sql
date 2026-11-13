@@ -78,10 +78,14 @@ create table if not exists public.game_attempts (
   score integer not null,
   correct integer not null,
   total integer not null,
+  missed_questions jsonb not null default '[]'::jsonb,
   completed_at timestamptz not null default now(),
   constraint game_attempts_counts_valid
     check (correct >= 0 and total >= 0)
 );
+
+alter table public.game_attempts
+  add column if not exists missed_questions jsonb not null default '[]'::jsonb;
 
 alter table public.game_attempts enable row level security;
 
