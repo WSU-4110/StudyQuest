@@ -6,22 +6,8 @@ function clamp(value, max) {
   return Math.min(Math.max(Math.floor(value), 0), max)
 }
 
-export function calculateRewards(modeId, result) {
-  const { score = 0, correct = 0, won = false, pairs = 0, mismatches = 0 } =
-    result ?? {}
-
-  let xp = 0
-
-  if (modeId === 'speed-round') {
-    // score is meters run, about a tenth of the old point totals.
-    xp = score
-  } else if (modeId === 'survival') {
-    xp = correct * 15
-  } else if (modeId === 'boss-battle') {
-    xp = correct * 10 + (won ? 100 : 0)
-  } else if (modeId === 'memory-flip') {
-    xp = pairs * 20 - mismatches * 5
-  }
-
+// Each mode's strategy supplies its own XP formula; the cap is shared.
+export function calculateRewards(mode, result) {
+  const xp = mode.calculateXp(result ?? {})
   return { xp: clamp(xp, MAX_XP_PER_GAME) }
 }

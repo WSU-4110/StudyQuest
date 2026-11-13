@@ -3,27 +3,13 @@ import { Link, useParams } from 'react-router-dom'
 import { useAuth } from '../Auth-Page/AuthContext.jsx'
 import { awardRewards, REWARD_AMOUNTS } from '../services/rewards.js'
 import { useStudySets } from '../Study-Set-Page/StudySetContext.jsx'
-import BossBattle from './BossBattle.jsx'
 import { toQuestions } from './gameEngine.js'
 import { getEligibleCards, getGameMode } from './gameModes.js'
-import MemoryFlip from './MemoryFlip.jsx'
-import { countPairs } from './memoryFlipEngine.js'
 import PairCountPicker from './PairCountPicker.jsx'
 import ResultsScreen from './ResultsScreen.jsx'
 import { calculateRewards, MAX_XP_PER_GAME, XP_PER_LEVEL } from './rewards.js'
-import SpeedRound from './SpeedRound.jsx'
-import Survival from './Survival.jsx'
 import './GamePage.css'
 import { supabase } from '../lib/supabaseClient.js'
-
-const MODE_COMPONENTS = {
-  'speed-round': SpeedRound,
-  survival: Survival,
-  'boss-battle': BossBattle,
-  'memory-flip': MemoryFlip,
-}
-
-const MIN_PAIRS = 3
 
 function GamePage() {
   const { id, modeId } = useParams()
@@ -90,7 +76,7 @@ function GamePage() {
 
     void saveGameResult(stats)
 
-    const earned = calculateRewards(mode.id, stats)
+    const earned = calculateRewards(mode, stats)
     if (earned.xp === 0) {
       setReward({ status: 'none', earned })
       return
@@ -153,11 +139,13 @@ function GamePage() {
 
   const questions = toQuestions(getEligibleCards(mode, studySet.cards))
   const playable = questions.length >= mode.minCards
-  const ModeComponent = MODE_COMPONENTS[mode.id]
+  const ModeComponent = mode.Component
 
-  const choosesPairs = mode.id === 'memory-flip'
-  const pairLimit = choosesPairs ? countPairs(questions) : 0
-  const minPairs = Math.min(MIN_PAIRS, pairLimit)
+  // Modes that let the player pick how many pairs to play (Match Up).
+  const { pairPicker } = mode
+  const choosesPairs = Boolean(pairPicker)
+  const pairLimit = choosesPairs ? pairPicker.countPairs(questions) : 0
+  const minPairs = choosesPairs ? Math.min(pairPicker.min, pairLimit) : 0
   const pairCount = Math.min(pairLimit, pairChoice ?? mode.settings.maxPairs)
   const settings = choosesPairs
     ? { ...mode.settings, maxPairs: pairCount }
