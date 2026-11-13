@@ -79,7 +79,12 @@ function QuizResultsPage() {
         <ol>
           {results.map((result) => (
             <li key={result.attempt_id}>
-              <h2>{result.study_set_title} — {result.mode_id}</h2>
+              <h2>
+                {result.study_set_title} —{' '}
+                {result.mode_id === 'practice-quiz'
+                  ? 'Practice quiz'
+                  : result.mode_id}
+              </h2>
               <p>
                 Score: {result.score}; correct: {result.correct} of {result.total}
               </p>
