@@ -1,11 +1,12 @@
-// streak includes the answer being scored, so the 3rd correct in a row is doubled.
-export function getSpeedRoundPoints(settings, { streak, msTaken }) {
-  const { pointsPerCorrect, maxSpeedBonus, speedBonusWindowMs } = settings
+// Meters run for one right answer. streak includes the answer being scored,
+// so the 3rd right in a row is doubled. The Double power-up doubles it again.
+export function getSpeedRoundDistance(settings, { streak, msTaken }, doubled) {
+  const { metersPerCorrect, maxSpeedBonus, speedBonusWindowMs } = settings
   const speedFraction = Math.max(0, 1 - msTaken / speedBonusWindowMs)
-  const base = pointsPerCorrect + Math.round(maxSpeedBonus * speedFraction)
-  return streak >= settings.streakForMultiplier
-    ? base * settings.streakMultiplier
-    : base
+  let meters = metersPerCorrect + Math.round(maxSpeedBonus * speedFraction)
+  if (streak >= settings.streakForMultiplier) meters *= settings.streakMultiplier
+  if (doubled) meters *= 2
+  return meters
 }
 
 export function getBossMaxHp(settings, questionCount) {

@@ -2,16 +2,32 @@ import bossBattleIcon from '../assets/game-modes/boss-battle.svg'
 import memoryFlipIcon from '../assets/game-modes/memory-flip.svg'
 import speedRoundIcon from '../assets/game-modes/speed-round.svg'
 import survivalIcon from '../assets/game-modes/survival.svg'
+import bossIcon from '../assets/game-modes/boss-slime.svg'
+import wrongIcon from '../assets/game-modes/card-icon-false.svg'
+import questionIcon from '../assets/game-modes/card-icon-question.svg'
+import rightIcon from '../assets/game-modes/card-icon-true.svg'
+import starIcon from '../assets/game-modes/dizzy-star.svg'
+import ghostIcon from '../assets/game-modes/dungeon-ghost.svg'
+import heartIcon from '../assets/game-modes/perk-heart.svg'
+import shieldIcon from '../assets/game-modes/perk-shield.svg'
+import powerUpIcon from '../assets/game-modes/powerup-freeze.svg'
+import clockIcon from '../assets/game-modes/rule-clock.svg'
+import flameIcon from '../assets/game-modes/rule-flame.svg'
+import stairsIcon from '../assets/game-modes/rule-stairs.svg'
 
 function getCardType(card) {
   return card.type ?? 'short_answer'
 }
 
-function hasSingleAnswer(card) {
+// Each mode's quickRules are the short lines with icons on its start screen.
+
+// Match Up needs one answer per card. True/false statements are sorted onto
+// shared True and False cards instead of getting their own answer card.
+function isMatchable(card) {
   const type = getCardType(card)
   if (type === 'short_answer') return Boolean(String(card.answer ?? '').trim())
   if (type === 'multiple_choice') return (card.correctIndexes ?? []).length === 1
-  // True/false answers aren't unique, so they can't form distinct pairs.
+  if (type === 'true_false') return typeof card.answer === 'boolean'
   return false
 }
 
@@ -20,21 +36,28 @@ export const GAME_MODES = [
     id: 'speed-round',
     icon: speedRoundIcon,
     name: 'Speed Round',
-    scoreLabel: 'points',
-    tagline: 'Answer as many as you can before time runs out.',
-    rules: [
-      '60 seconds on the clock.',
-      '+100 points per correct answer, plus up to +50 for answering within 5 seconds.',
-      '3 correct in a row doubles your points until you miss.',
-      'Cards reshuffle if you get through the whole set.',
+    scoreLabel: 'meters',
+    tagline: 'Race the clock. Right answers buy more time.',
+    quickRules: [
+      { icon: speedRoundIcon, text: 'Answer fast to run farther' },
+      { icon: clockIcon, text: 'Right +2s, wrong −3s' },
+      { icon: flameIcon, text: '3 in a row: 2× distance' },
+      { icon: powerUpIcon, text: 'Every 4th card has a power-up' },
     ],
     settings: {
       durationSeconds: 60,
-      pointsPerCorrect: 100,
-      maxSpeedBonus: 50,
+      maxSeconds: 60,
+      timeGainSeconds: 2,
+      timePenaltySeconds: 3,
+      metersPerCorrect: 10,
+      maxSpeedBonus: 5,
       speedBonusWindowMs: 5000,
       streakForMultiplier: 3,
       streakMultiplier: 2,
+      pickupEvery: 4,
+      freezeSeconds: 5,
+      doubleSeconds: 10,
+      maxSkips: 3,
     },
     minCards: 1,
     isEligibleCard: () => true,
@@ -43,16 +66,22 @@ export const GAME_MODES = [
     id: 'survival',
     icon: survivalIcon,
     name: 'Survival',
-    scoreLabel: 'correct answers',
-    tagline: 'No timer. Three lives. How far can you go?',
-    rules: [
-      'You start with 3 lives.',
-      'Each wrong answer costs a life.',
-      'Your score is how many you answer correctly before you run out.',
-      'Cards reshuffle if you get through the whole set.',
+    scoreLabel: 'floors deep',
+    tagline: 'No timer. Descend the dungeon one right answer at a time.',
+    quickRules: [
+      { icon: stairsIcon, text: 'Right answer: one floor deeper' },
+      { icon: survivalIcon, text: 'Wrong answer: lose a heart' },
+      { icon: heartIcon, text: '5 in a row heals a heart' },
+      { icon: shieldIcon, text: 'Every 5 floors: pick an upgrade' },
+      { icon: ghostIcon, text: 'Missed cards come back as ghosts' },
     ],
     settings: {
       lives: 3,
+      maxLives: 5,
+      regenStreak: 5,
+      checkpointEvery: 5,
+      ghostDelay: 3,
+      ghostBonusFloors: 1,
     },
     minCards: 1,
     isEligibleCard: () => true,
@@ -63,11 +92,12 @@ export const GAME_MODES = [
     name: 'Boss Battle',
     scoreLabel: 'damage dealt',
     tagline: 'A turn-based duel with the Slime King.',
-    rules: [
-      'Each turn, pick a move, then answer a question to pull it off.',
-      'Right answer: your move works. Wrong answer: it misses.',
-      'The Slime King strikes back every turn. Guard against its charged attack.',
-      '3 right in a row lands critical hits for 1.5× damage.',
+    quickRules: [
+      { icon: bossIcon, text: 'Bring the Slime King to 0 HP' },
+      { icon: rightIcon, text: 'Answer right to land your move' },
+      { icon: wrongIcon, text: 'Wrong answer: your move misses' },
+      { icon: shieldIcon, text: 'Guard when it charges up' },
+      { icon: starIcon, text: '3 in a row: critical hits' },
     ],
     settings: {
       playerMaxHp: 100,
@@ -121,20 +151,23 @@ export const GAME_MODES = [
   {
     id: 'memory-flip',
     icon: memoryFlipIcon,
-    name: 'Memory Flip',
+    // The id stays 'memory-flip' so rewards and saved links keep working.
+    name: 'Match Up',
     scoreLabel: 'points',
-    tagline: 'Flip tiles to match each question with its answer.',
-    rules: [
-      'Tiles start face down. Flip two at a time.',
-      'A question and its answer stay face up when matched.',
-      'Up to 8 pairs per game. Fewer mismatches means more XP.',
-      'Uses short-answer cards and multiple-choice cards with one correct option.',
+    tagline: 'Match each question to its answer.',
+    quickRules: [
+      { icon: questionIcon, text: 'Pick a question, then its answer' },
+      { icon: rightIcon, text: 'Sort true/false onto True or False' },
+      { icon: flameIcon, text: 'Matches in a row score more' },
+      { icon: wrongIcon, text: 'Fewer misses, more XP' },
     ],
     settings: {
       maxPairs: 8,
+      pointsPerMatch: 100,
+      streakBonus: 50,
     },
     minCards: 3,
-    isEligibleCard: hasSingleAnswer,
+    isEligibleCard: isMatchable,
   },
 ]
 

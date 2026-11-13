@@ -6,6 +6,9 @@ import { useStudySets } from '../Study-Set-Page/StudySetContext.jsx'
 import BossBattle from './BossBattle.jsx'
 import { toQuestions } from './gameEngine.js'
 import { getEligibleCards, getGameMode } from './gameModes.js'
+import MemoryFlip from './MemoryFlip.jsx'
+import { countPairs } from './memoryFlipEngine.js'
+import PairCountPicker from './PairCountPicker.jsx'
 import ResultsScreen from './ResultsScreen.jsx'
 import { calculateRewards, MAX_XP_PER_GAME, XP_PER_LEVEL } from './rewards.js'
 import SpeedRound from './SpeedRound.jsx'
@@ -16,7 +19,10 @@ const MODE_COMPONENTS = {
   'speed-round': SpeedRound,
   survival: Survival,
   'boss-battle': BossBattle,
+  'memory-flip': MemoryFlip,
 }
+
+const MIN_PAIRS = 3
 
 function GamePage() {
   const { id, modeId } = useParams()
@@ -28,6 +34,8 @@ function GamePage() {
   const [round, setRound] = useState(0)
   const [result, setResult] = useState(null)
   const [reward, setReward] = useState(null)
+  // Match Up's pair count from the start screen. null means the default.
+  const [pairChoice, setPairChoice] = useState(null)
   const awardedRoundRef = useRef(0)
   const completionIdRef = useRef(null)
 
@@ -112,14 +120,24 @@ function GamePage() {
   const playable = questions.length >= mode.minCards
   const ModeComponent = MODE_COMPONENTS[mode.id]
 
+  const choosesPairs = mode.id === 'memory-flip'
+  const pairLimit = choosesPairs ? countPairs(questions) : 0
+  const minPairs = Math.min(MIN_PAIRS, pairLimit)
+  const pairCount = Math.min(pairLimit, pairChoice ?? mode.settings.maxPairs)
+  const settings = choosesPairs
+    ? { ...mode.settings, maxPairs: pairCount }
+    : mode.settings
+
   if (phase === 'playing' && ModeComponent) {
     return (
       <main className="game-page">
         <ModeComponent
           key={round}
           questions={questions}
-          settings={mode.settings}
+          settings={settings}
           onFinish={finishRound}
+          // Personal bests are kept per account and study set.
+          recordKey={`${session.user.id}:${studySet.id}`}
         />
       </main>
     )
@@ -161,13 +179,25 @@ function GamePage() {
 
         <div className="start-rules">
           <h2>How to play</h2>
-          <ul>
-            {mode.rules.map((rule) => (
-              <li key={rule}>{rule}</li>
+          <ul className="quick-rules">
+            {mode.quickRules.map((rule) => (
+              <li key={rule.text}>
+                <img className="pixel-icon" src={rule.icon} alt="" />
+                {rule.text}
+              </li>
             ))}
           </ul>
           <p className="start-reward">Earn up to {MAX_XP_PER_GAME} XP</p>
         </div>
+
+        {playable && choosesPairs && pairLimit > 0 ? (
+          <PairCountPicker
+            value={pairCount}
+            min={minPairs}
+            max={pairLimit}
+            onChange={setPairChoice}
+          />
+        ) : null}
 
         {!playable ? (
           <p>

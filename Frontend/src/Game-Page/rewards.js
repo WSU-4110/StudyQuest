@@ -13,7 +13,8 @@ export function calculateRewards(modeId, result) {
   let xp = 0
 
   if (modeId === 'speed-round') {
-    xp = score / 10
+    // score is meters run, about a tenth of the old point totals.
+    xp = score
   } else if (modeId === 'survival') {
     xp = correct * 15
   } else if (modeId === 'boss-battle') {

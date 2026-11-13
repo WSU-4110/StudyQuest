@@ -5,6 +5,7 @@ const TITLES = {
   victory: 'Victory!',
   defeat: 'Defeated',
   'out-of-lives': 'Out of lives',
+  cleared: 'Board cleared!',
 }
 
 function RewardPanel({ reward }) {
@@ -74,11 +75,17 @@ function MissedList({ missed }) {
     <div className="missed-section">
       <h2>Review your misses ({missed.length})</h2>
       <ol className="missed-list">
-        {missed.map(({ question, response }, index) => (
+        {missed.map(({ question, response, responseText, times }, index) => (
           <li key={`${question.id}-${index}`} className="missed-item">
-            <p className="missed-prompt">{question.prompt}</p>
+            <p className="missed-prompt">
+              {question.prompt}
+              {times > 1 ? (
+                <span className="missed-times"> (missed {times}×)</span>
+              ) : null}
+            </p>
             <p className="missed-yours">
-              Your answer: {formatResponse(question, response)}
+              {times > 1 ? 'Your last answer' : 'Your answer'}:{' '}
+              {responseText ?? formatResponse(question, response)}
             </p>
             <p className="missed-correct">
               Correct answer: {formatCorrectAnswer(question)}
@@ -94,13 +101,21 @@ function ResultsScreen({ result, mode, reward, studySetId, onPlayAgain }) {
   const accuracy = result.answered
     ? Math.round((result.correct / result.answered) * 100)
     : 0
-  const perfect = result.answered > 0 && result.missed.length === 0
+  // Memory Flip doesn't list every mismatch as a miss, so compare counts.
+  const perfect = result.answered > 0 && result.correct === result.answered
 
   return (
     <section className="results-screen">
       <h1>{TITLES[result.outcome] ?? 'Round over'}</h1>
       <p className="summary-score">{result.score}</p>
       <p className="summary-score-label">{mode.scoreLabel}</p>
+      {result.newBest ? (
+        <p className="new-best">
+          {result.previousBest !== null && result.previousBest !== undefined
+            ? `New personal best! Previous: ${result.previousBest} ${mode.scoreLabel}`
+            : 'Personal best set! Beat it next time.'}
+        </p>
+      ) : null}
 
       <dl className="summary-stats">
         <div>
