@@ -58,11 +58,15 @@ function GamePage() {
       score: stats.score,
       correct: stats.correct,
       total: stats.answered,
-      missed_questions: stats.missed.map(({ question, response }) => ({
-        question: question.prompt,
-        correctAnswer: formatCorrectAnswer(question),
-        yourAnswer: formatResponse(question, response),
-      })),
+      // Match Up records the card picked as responseText; other modes keep
+      // the raw response.
+      missed_questions: stats.missed.map(
+        ({ question, response, responseText }) => ({
+          question: question.prompt,
+          correctAnswer: formatCorrectAnswer(question),
+          yourAnswer: responseText ?? formatResponse(question, response),
+        }),
+      ),
     })
 
     if (error) throw error
