@@ -12,7 +12,7 @@ function optionClass(index, { picked, correctIndexes, feedback, selected }) {
   return classes.join(' ')
 }
 
-function MultipleChoice({ question, feedback, onSubmit }) {
+function MultipleChoice({ question, feedback, onSubmit, eliminated }) {
   const [selected, setSelected] = useState([])
   const multiSelect = question.correctIndexes.length > 1
 
@@ -34,22 +34,27 @@ function MultipleChoice({ question, feedback, onSubmit }) {
         <p className="answer-hint">Select all that apply</p>
       ) : null}
       <div className="answer-options">
-        {question.options.map((option, index) => (
-          <button
-            key={`${option}-${index}`}
-            type="button"
-            className={optionClass(index, {
-              picked: feedback?.response ?? [],
-              correctIndexes: question.correctIndexes,
-              feedback,
-              selected,
-            })}
-            disabled={Boolean(feedback)}
-            onClick={() => handleClick(index)}
-          >
-            {option}
-          </button>
-        ))}
+        {question.options.map((option, index) => {
+          const knockedOut = eliminated.includes(index)
+          let className = optionClass(index, {
+            picked: feedback?.response ?? [],
+            correctIndexes: question.correctIndexes,
+            feedback,
+            selected,
+          })
+          if (knockedOut) className += ' eliminated'
+          return (
+            <button
+              key={`${option}-${index}`}
+              type="button"
+              className={className}
+              disabled={Boolean(feedback) || knockedOut}
+              onClick={() => handleClick(index)}
+            >
+              {option}
+            </button>
+          )
+        })}
       </div>
       {multiSelect ? (
         <button
@@ -95,7 +100,7 @@ function TrueFalse({ question, feedback, onSubmit }) {
   )
 }
 
-function ShortAnswer({ feedback, onSubmit }) {
+function ShortAnswer({ feedback, onSubmit, hint }) {
   const [value, setValue] = useState('')
 
   function handleSubmit(event) {
@@ -108,6 +113,8 @@ function ShortAnswer({ feedback, onSubmit }) {
     : 'answer-input'
 
   return (
+    <>
+    {hint ? <p className="answer-hint item-hint">Hint: {hint}</p> : null}
     <form className="short-answer-form" onSubmit={handleSubmit}>
       <input
         className={inputClass}
@@ -126,10 +133,18 @@ function ShortAnswer({ feedback, onSubmit }) {
         Submit
       </button>
     </form>
+    </>
   )
 }
 
-function QuestionCard({ question, feedback, onSubmit }) {
+// eliminated and hint come from Survival's 50/50 and Hint items.
+function QuestionCard({
+  question,
+  feedback,
+  onSubmit,
+  eliminated = [],
+  hint = null,
+}) {
   let cardClass = 'question-card'
   if (feedback) cardClass += feedback.correct ? ' is-correct' : ' is-wrong'
 
@@ -142,6 +157,7 @@ function QuestionCard({ question, feedback, onSubmit }) {
           question={question}
           feedback={feedback}
           onSubmit={onSubmit}
+          eliminated={eliminated}
         />
       ) : null}
       {question.type === 'true_false' ? (
@@ -152,7 +168,7 @@ function QuestionCard({ question, feedback, onSubmit }) {
         />
       ) : null}
       {question.type === 'short_answer' ? (
-        <ShortAnswer feedback={feedback} onSubmit={onSubmit} />
+        <ShortAnswer feedback={feedback} onSubmit={onSubmit} hint={hint} />
       ) : null}
 
       {feedback && !feedback.correct && question.type === 'short_answer' ? (

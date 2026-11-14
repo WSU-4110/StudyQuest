@@ -57,7 +57,7 @@ export function advanceDeck(deck, count) {
   return { order: drawOrder(count, deck.order[deck.position]), position: 0 }
 }
 
-function normalizeText(value) {
+export function normalizeText(value) {
   return String(value ?? '')
     .trim()
     .replace(/\s+/g, ' ')

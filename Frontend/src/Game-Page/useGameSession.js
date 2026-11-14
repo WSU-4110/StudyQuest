@@ -13,37 +13,69 @@ const INITIAL_STATS = {
   missed: [],
 }
 
-export function useGameSession(questions, getPoints, { isOver } = {}) {
+// One review entry per question: missing it again keeps the latest answer
+// and counts the misses instead of adding a duplicate.
+function addMiss(missed, question, response) {
+  const at = missed.findIndex((entry) => entry.question === question)
+  if (at === -1) return [...missed, { question, response, times: 1 }]
+  return missed.map((entry, i) =>
+    i === at ? { ...entry, response, times: entry.times + 1 } : entry,
+  )
+}
+
+// Options:
+// - isOver(stats): stop advancing once it returns true.
+// - takeQueued(): called before each new card. Return a question index to show
+//   that card next (without using up a card from the deck), or null.
+export function useGameSession(questions, getPoints, options = {}) {
   const [deck, setDeck] = useState(() => ({
     order: drawOrder(questions.length),
     position: 0,
     turn: 0,
+    queued: null,
   }))
   const [stats, setStats] = useState(INITIAL_STATS)
   const [feedback, setFeedback] = useState(null)
   const shownAtRef = useRef(0)
+  const takeQueuedRef = useRef(options.takeQueued)
 
-  const question = questions[deck.order[deck.position]] ?? null
-  const over = isOver ? isOver(stats) : false
+  const questionIndex = deck.queued ?? deck.order[deck.position]
+  const question = questions[questionIndex] ?? null
+  const over = options.isOver ? options.isOver(stats) : false
+
+  useEffect(() => {
+    takeQueuedRef.current = options.takeQueued
+  })
 
   useEffect(() => {
     shownAtRef.current = Date.now()
   }, [deck])
 
+  function advance() {
+    const queued = takeQueuedRef.current?.() ?? null
+    setDeck((prev) =>
+      queued !== null
+        ? { ...prev, queued, turn: prev.turn + 1 }
+        : {
+            ...advanceDeck(prev, questions.length),
+            queued: null,
+            turn: prev.turn + 1,
+          },
+    )
+  }
+
   useEffect(() => {
-    if (!feedback || over) return
+    if (!feedback || over) return undefined
     const timeout = setTimeout(
       () => {
         setFeedback(null)
-        setDeck((prev) => ({
-          ...advanceDeck(prev, questions.length),
-          turn: prev.turn + 1,
-        }))
+        advance()
       },
       feedback.correct ? CORRECT_FEEDBACK_MS : WRONG_FEEDBACK_MS,
     )
     return () => clearTimeout(timeout)
-  }, [feedback, over, questions.length])
+    // advance only reads refs and setters, so it doesn't need to be a dependency.
+  }, [feedback, over, questions.length]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function submitAnswer(response) {
     if (feedback || over || !question) return null
@@ -51,7 +83,12 @@ export function useGameSession(questions, getPoints, { isOver } = {}) {
     const correct = isCorrectAnswer(question, response)
     const streak = correct ? stats.streak + 1 : 0
     const points = correct
-      ? getPoints({ streak, msTaken: Date.now() - shownAtRef.current })
+      ? getPoints({
+          streak,
+          msTaken: Date.now() - shownAtRef.current,
+          question,
+          queued: deck.queued !== null,
+        })
       : 0
 
     const nextStats = {
@@ -60,7 +97,7 @@ export function useGameSession(questions, getPoints, { isOver } = {}) {
       answered: stats.answered + 1,
       streak,
       bestStreak: Math.max(stats.bestStreak, streak),
-      missed: correct ? stats.missed : [...stats.missed, { question, response }],
+      missed: correct ? stats.missed : addMiss(stats.missed, question, response),
     }
 
     setStats(nextStats)
@@ -68,5 +105,21 @@ export function useGameSession(questions, getPoints, { isOver } = {}) {
     return { correct, points, stats: nextStats }
   }
 
-  return { question, turn: deck.turn, stats, feedback, submitAnswer }
+  // Moves on without answering. Stats and streak are left alone.
+  function skip() {
+    if (feedback || over || !question) return false
+    advance()
+    return true
+  }
+
+  return {
+    question,
+    questionIndex,
+    turn: deck.turn,
+    queued: deck.queued !== null,
+    stats,
+    feedback,
+    submitAnswer,
+    skip,
+  }
 }

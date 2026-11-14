@@ -1,142 +1,36 @@
-import bossBattleIcon from '../assets/game-modes/boss-battle.svg'
-import memoryFlipIcon from '../assets/game-modes/memory-flip.svg'
-import speedRoundIcon from '../assets/game-modes/speed-round.svg'
-import survivalIcon from '../assets/game-modes/survival.svg'
+import { bossBattle } from './modes/bossBattle.js'
+import { memoryFlip } from './modes/memoryFlip.js'
+import { speedRound } from './modes/speedRound.js'
+import { survival } from './modes/survival.js'
 
-function getCardType(card) {
-  return card.type ?? 'short_answer'
-}
+/**
+ * Strategy pattern: each game mode is a strategy object with the same shape,
+ * so GamePage, rewards and the study set page can run any mode without
+ * checking which one it is. To add a mode, create a strategy in ./modes and
+ * list it in GAME_MODES. Nothing else needs to change.
+ *
+ * @typedef {object} GameModeStrategy
+ * @property {string} id URL slug, e.g. 'speed-round'.
+ * @property {string} icon
+ * @property {string} name
+ * @property {string} scoreLabel What the round's score counts.
+ * @property {string} tagline
+ * @property {{icon: string, text: string}[]} quickRules Short lines with icons
+ *   on the start screen.
+ * @property {object} settings Tuning values passed to Component.
+ * @property {number} minCards Eligible cards needed to play.
+ * @property {import('react').ComponentType<{questions: object[], settings: object, onFinish: (result: object) => void, recordKey: string}> | null} Component
+ *   Plays one round and calls onFinish with the result. null if the mode isn't built yet.
+ * @property {(card: object) => boolean} isEligibleCard Whether this mode can use a card.
+ * @property {(result: object) => number} calculateXp Raw XP for a finished round.
+ *   calculateRewards rounds and caps it.
+ * @property {{min: number, countPairs: (questions: object[]) => number}} [pairPicker]
+ *   Optional. When set, the start screen asks how many pairs to play and
+ *   passes the choice to Component as settings.maxPairs.
+ */
 
-function hasSingleAnswer(card) {
-  const type = getCardType(card)
-  if (type === 'short_answer') return Boolean(String(card.answer ?? '').trim())
-  if (type === 'multiple_choice') return (card.correctIndexes ?? []).length === 1
-  // True/false answers aren't unique, so they can't form distinct pairs.
-  return false
-}
-
-export const GAME_MODES = [
-  {
-    id: 'speed-round',
-    icon: speedRoundIcon,
-    name: 'Speed Round',
-    scoreLabel: 'points',
-    tagline: 'Answer as many as you can before time runs out.',
-    rules: [
-      '60 seconds on the clock.',
-      '+100 points per correct answer, plus up to +50 for answering within 5 seconds.',
-      '3 correct in a row doubles your points until you miss.',
-      'Cards reshuffle if you get through the whole set.',
-    ],
-    settings: {
-      durationSeconds: 60,
-      pointsPerCorrect: 100,
-      maxSpeedBonus: 50,
-      speedBonusWindowMs: 5000,
-      streakForMultiplier: 3,
-      streakMultiplier: 2,
-    },
-    minCards: 1,
-    isEligibleCard: () => true,
-  },
-  {
-    id: 'survival',
-    icon: survivalIcon,
-    name: 'Survival',
-    scoreLabel: 'correct answers',
-    tagline: 'No timer. Three lives. How far can you go?',
-    rules: [
-      'You start with 3 lives.',
-      'Each wrong answer costs a life.',
-      'Your score is how many you answer correctly before you run out.',
-      'Cards reshuffle if you get through the whole set.',
-    ],
-    settings: {
-      lives: 3,
-    },
-    minCards: 1,
-    isEligibleCard: () => true,
-  },
-  {
-    id: 'boss-battle',
-    icon: bossBattleIcon,
-    name: 'Boss Battle',
-    scoreLabel: 'damage dealt',
-    tagline: 'A turn-based duel with the Slime King.',
-    rules: [
-      'Each turn, pick a move, then answer a question to pull it off.',
-      'Right answer: your move works. Wrong answer: it misses.',
-      'The Slime King strikes back every turn. Guard against its charged attack.',
-      '3 right in a row lands critical hits for 1.5× damage.',
-    ],
-    settings: {
-      playerMaxHp: 100,
-      bossHpPerCard: 100,
-      minBossHp: 300,
-      maxBossHp: 1000,
-      critStreak: 3,
-      critMultiplier: 1.5,
-      bossAttackMin: 8,
-      bossAttackMax: 14,
-      bossChargedDamage: 30,
-      enrageBonus: 4,
-      attacksBeforeCharge: 2,
-      moves: [
-        {
-          id: 'strike',
-          name: 'Strike',
-          kind: 'attack',
-          damage: 100,
-          uses: null,
-          description: '100 damage',
-        },
-        {
-          id: 'power-slam',
-          name: 'Power Slam',
-          kind: 'attack',
-          damage: 180,
-          uses: 3,
-          description: '180 damage',
-        },
-        {
-          id: 'guard',
-          name: 'Guard',
-          kind: 'guard',
-          uses: 3,
-          description: 'Block the next attack',
-        },
-        {
-          id: 'potion',
-          name: 'Potion',
-          kind: 'heal',
-          heal: 40,
-          uses: 2,
-          description: 'Heal 40 HP',
-        },
-      ],
-    },
-    minCards: 1,
-    isEligibleCard: () => true,
-  },
-  {
-    id: 'memory-flip',
-    icon: memoryFlipIcon,
-    name: 'Memory Flip',
-    scoreLabel: 'points',
-    tagline: 'Flip tiles to match each question with its answer.',
-    rules: [
-      'Tiles start face down. Flip two at a time.',
-      'A question and its answer stay face up when matched.',
-      'Up to 8 pairs per game. Fewer mismatches means more XP.',
-      'Uses short-answer cards and multiple-choice cards with one correct option.',
-    ],
-    settings: {
-      maxPairs: 8,
-    },
-    minCards: 3,
-    isEligibleCard: hasSingleAnswer,
-  },
-]
+/** @type {GameModeStrategy[]} */
+export const GAME_MODES = [speedRound, survival, bossBattle, memoryFlip]
 
 export function getGameMode(modeId) {
   return GAME_MODES.find((mode) => mode.id === modeId) ?? null
