@@ -1,0 +1,160 @@
+import { Link } from 'react-router-dom'
+import { formatCorrectAnswer, formatResponse } from './gameEngine.js'
+
+const TITLES = {
+  victory: 'Victory!',
+  defeat: 'Defeated',
+  'out-of-lives': 'Out of lives',
+  cleared: 'Board cleared!',
+}
+
+function RewardPanel({ reward }) {
+  if (!reward) return null
+
+  if (reward.status === 'none') {
+    return (
+      <div className="reward-panel">
+        <p>No rewards this round. Get an answer right to earn XP.</p>
+      </div>
+    )
+  }
+
+  if (reward.status === 'saving') {
+    return (
+      <div className="reward-panel">
+        <p>Saving rewards...</p>
+      </div>
+    )
+  }
+
+  if (reward.status === 'error') {
+    return (
+      <div className="reward-panel">
+        <p className="reward-error">
+          Couldn't save rewards: {reward.error}
+        </p>
+      </div>
+    )
+  }
+
+  if (reward.status !== 'saved') return null
+
+  return (
+    <div className="reward-panel">
+      <h2>Rewards Earned</h2>
+
+      <div className="reward-amounts">
+        <span className="reward-xp">
+          +{reward.earned.xp} XP
+        </span>
+        <span className="reward-currency">
+          +{reward.earned.currency} Coins
+        </span>
+      </div>
+
+      <div className="reward-totals">
+        <h3>Your Current Stats</h3>
+        <p>Total XP: {reward.xp}</p>
+        <p>Level: {reward.level}</p>
+        <p>Total Coins: {reward.currency}</p>
+
+        {reward.leveledUp && (
+          <p className="level-up">
+            Level up! You're now level {reward.level}!
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function MissedList({ missed }) {
+  if (missed.length === 0) return null
+
+  return (
+    <div className="missed-section">
+      <h2>Review your misses ({missed.length})</h2>
+      <ol className="missed-list">
+        {missed.map(({ question, response, responseText, times }, index) => (
+          <li key={`${question.id}-${index}`} className="missed-item">
+            <p className="missed-prompt">
+              {question.prompt}
+              {times > 1 ? (
+                <span className="missed-times"> (missed {times}×)</span>
+              ) : null}
+            </p>
+            <p className="missed-yours">
+              {times > 1 ? 'Your last answer' : 'Your answer'}:{' '}
+              {responseText ?? formatResponse(question, response)}
+            </p>
+            <p className="missed-correct">
+              Correct answer: {formatCorrectAnswer(question)}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  )
+}
+
+function ResultsScreen({ result, mode, reward, resultSave, studySetId, onPlayAgain }) {
+  const accuracy = result.answered
+    ? Math.round((result.correct / result.answered) * 100)
+    : 0
+  // Memory Flip doesn't list every mismatch as a miss, so compare counts.
+  const perfect = result.answered > 0 && result.correct === result.answered
+
+  return (
+    <section className="results-screen">
+      <h1>{TITLES[result.outcome] ?? 'Round over'}</h1>
+      <p className="summary-score">{result.score}</p>
+      <p className="summary-score-label">{mode.scoreLabel}</p>
+      {result.newBest ? (
+        <p className="new-best">
+          {result.previousBest !== null && result.previousBest !== undefined
+            ? `New personal best! Previous: ${result.previousBest} ${mode.scoreLabel}`
+            : 'Personal best set! Beat it next time.'}
+        </p>
+      ) : null}
+
+      {resultSave?.status === 'saving' && <p>Saving game result...</p>}
+      {resultSave?.status === 'saved' && <p>Game result saved.</p>}
+      {resultSave?.status === 'error' && (
+        <p role="alert">Could not save game result: {resultSave.message}</p>
+      )}
+
+      <dl className="summary-stats">
+        <div>
+          <dt>Correct</dt>
+          <dd>
+            {result.correct} / {result.answered}
+          </dd>
+        </div>
+        <div>
+          <dt>Accuracy</dt>
+          <dd>{accuracy}%</dd>
+        </div>
+        <div>
+          <dt>Best streak</dt>
+          <dd>{result.bestStreak}</dd>
+        </div>
+      </dl>
+
+      <RewardPanel reward={reward} />
+
+      {perfect ? (
+        <p className="perfect-round">No misses. Perfect round!</p>
+      ) : null}
+      <MissedList missed={result.missed} />
+
+      <div className="summary-actions">
+        <button type="button" className="start-btn" onClick={onPlayAgain}>
+          Play again
+        </button>
+        <Link to={`/studysets/${studySetId}`}>Try another mode</Link>
+      </div>
+    </section>
+  )
+}
+
+export default ResultsScreen

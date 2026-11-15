@@ -52,10 +52,6 @@
     .primary-button {
         @apply flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-ink bg-violet px-5 py-4 font-extrabold text-white shadow-sticker transition hover:-translate-y-0.5 hover:shadow-card active:translate-y-0 active:shadow-sticker;
     }
-
-    .social-button {
-        @apply flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-line bg-white px-5 py-3.5 font-extrabold transition hover:border-ink hover:shadow-sticker;
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {

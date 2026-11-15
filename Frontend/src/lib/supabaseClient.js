@@ -8,12 +8,14 @@ export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 const REMEMBER_KEY = "studyquest-remember-me";
 
 // "Keep me logged in": persist the session in localStorage, otherwise in sessionStorage
-// so it is cleared when the browser tab closes.
+// so it is cleared when the browser tab closes. Account study sets only load while signed in,
+// so leaving this unchecked makes sets look "gone" after you close the site.
 export function setRememberMe(remember) {
     localStorage.setItem(REMEMBER_KEY, remember ? "true" : "false");
 }
 
 function activeStorage() {
+    // Default (unset) → localStorage so closing the tab keeps the account session.
     return localStorage.getItem(REMEMBER_KEY) === "false" ? sessionStorage : localStorage;
 }
 
