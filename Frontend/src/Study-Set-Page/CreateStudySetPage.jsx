@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useAuth } from '../Auth-Page/AuthContext.jsx'
 import { useStudySets } from './StudySetContext.jsx'
 import './CreateStudySetPage.css'
 
@@ -148,7 +149,15 @@ function hydrateCard(card) {
 function CreateStudySetPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { addStudySet, updateStudySet, getStudySet } = useStudySets()
+  const { session } = useAuth()
+  const {
+    addStudySet,
+    updateStudySet,
+    getStudySet,
+    isPersisted,
+    loading: setsLoading,
+    error: syncError,
+  } = useStudySets()
   const isEditing = Boolean(id)
   const existingSet = isEditing ? getStudySet(id) : null
 
@@ -299,6 +308,14 @@ function CreateStudySetPage() {
     navigate('/studysets')
   }
 
+  if (isEditing && setsLoading) {
+    return (
+      <main className="create-study-set">
+        <p>Loading study set…</p>
+      </main>
+    )
+  }
+
   if (isEditing && !existingSet) {
     return (
       <main className="create-study-set">
@@ -311,6 +328,17 @@ function CreateStudySetPage() {
   return (
     <main className="create-study-set">
       <h1>{isEditing ? 'Edit study set' : 'Create a study set'}</h1>
+
+      {!session ? (
+        <p className="form-message">
+          You are not signed in. Sets stay on this device only until you{' '}
+          <Link to="/login">log in</Link>.
+        </p>
+      ) : null}
+
+      {session && !isPersisted && syncError ? (
+        <p className="form-error">{syncError}</p>
+      ) : null}
 
       <form onSubmit={handleSubmit}>
         <div className="field">

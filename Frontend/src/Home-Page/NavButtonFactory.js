@@ -6,8 +6,6 @@ function NavButtonFactory({ type, navigate }) {
         signUp: { text: "Create Account", onClick: () => navigate("/login") },
         createSet: { text: "Begin a Study Set", onClick: () => navigate("/create") },
 
-        createSet: { text: "Begin a Study Set", onClick: () => navigate("/create") },
-
     };
     const config = buttonConfig[type];
     if (!config) {

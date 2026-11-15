@@ -1,0 +1,4 @@
+project_id = "studyquest"
+
+[functions.study-tips]
+verify_jwt = true
