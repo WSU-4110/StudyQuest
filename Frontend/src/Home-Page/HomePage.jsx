@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import HeroSection from "./HeroSection";
 import { getPlayerRewards } from "../services/rewards.js";
 import './Homepage.css';
+import NavButton from "./NavButton";
 
 function Homepage() {
   const navigate = useNavigate();
@@ -55,19 +56,8 @@ function Homepage() {
         )}
 
         <div className="button-container">
-          <button
-            className="signUp-button"
-            onClick={() => navigate("/login")}
-          >
-            Create Account
-          </button>
-
-          <button
-            className="createSet-button"
-            onClick={() => navigate("/create")}
-          >
-            Begin a Study Set
-          </button>
+          <button className="signUp-button" onClick={() => navigate("/login")}>Create Account</button>
+          <button className="createSet-button" onClick={() => navigate("/create")}>Begin a Study Set</button>
         </div>
       </header>
 
