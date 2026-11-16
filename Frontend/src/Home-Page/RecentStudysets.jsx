@@ -1,22 +1,25 @@
 import {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
-import {useAuth} from '../Auth/AuthContext'
-import {useStudySets} from '../Study-Set-Page/StudySetContext'
-import {supabase} from '../services/supabaseClient'
+import {useAuth} from '../Auth-Page/AuthContext.jsx'
+import {useStudySets} from '../Study-Set-Page/StudySetContext.jsx'
+import {supabase} from '../lib/supabaseClient.js'
 import './RecentStudysets.css'
 
 
 const MAX_RECENT_SETS = 3
 
-const getQuizPath = (setId) => `/quizzes/${setId}`
+const getQuizPath = (setId) => `/studysets/${setId}`
 
 function RecentStudysets() {
   const {session} = useAuth()
   const {studySets} = useStudySets()
-  const [recentSets, setRecentSets] = useState([])
+  const [attempts, setAttempts] = useState([])
 
     useEffect(() => {
-        if(!session || !supabase) return
+        if(!session || !supabase){
+            setAttempts([])
+            return
+        }
 
         let cancelled = false
         async function fetchRecentSets() {
@@ -24,7 +27,7 @@ function RecentStudysets() {
                 .from('game_attempts')
                 .select('attempt_id, study_set_title, correct, total, completed_at')
                 .order('completed_at', {ascending: false})
-                .limit(MAX_RECENT_SETS)
+                .limit(20)
             if (error || cancelled) return
 
             const opened = new Set()
@@ -36,7 +39,7 @@ function RecentStudysets() {
                 recent.push(attempt)
             }
 
-            setRecentSets(recent.slice(0, MAX_RECENT_SETS))
+            setAttempts(recent)
         }
         fetchRecentSets()
 
@@ -45,26 +48,45 @@ function RecentStudysets() {
         }
         }, [session])
 
-        if(!session || recentSets.length === 0){
-            return null
-        } 
+         const playedCards = attempts
+        .map((attempt) => ({ attempt, set: studySets.find((s) => s.title === attempt.study_set_title),}))
+        .filter((card) => card.set)
 
-       return (
-        <div className="recent-studysets-row">
-        {recentSets.map((attempt) => {
-            const set = studySets.find((s) => s.title === attempt.study_set_title)
-            if (!set) return null
+        const playedIds = new Set(playedCards.map((card) => card.set.id))
+        const fillerCards = studySets
+        .filter((s) => !playedIds.has(s.id))
+        .map((set) => ({ attempt: null, set }))
 
-            const percentage = attempt.total > 0 ? Math.round((attempt.correct / attempt.total) * 100): 0
+        const cards = [...playedCards, ...fillerCards].slice(0, MAX_RECENT_SETS)
 
+        if (cards.length === 0) {
             return (
-            <div className="recent-studyset" key={attempt.attempt_id}>
-                <h3>{set.title}</h3>
-                <p>Score: {percentage}%</p>
-                <Link to={getQuizPath(set.id)}>Review</Link>
-            </div>
+            <p className="hero-text">
+                No study sets yet. <Link to="/create">Create one</Link> to get started.
+            </p>
+            )
+        }
+
+         return (
+            <div className="recent-studyset-row">
+            {cards.map(({ attempt, set }) => {
+                const percentage =
+                attempt && attempt.total > 0
+                    ? Math.round((attempt.correct / attempt.total) * 100)
+                    : null
+
+                return (
+                <div className="recent-studyset" key={set.id}>
+                    <h3>{set.title}</h3>
+                    <p>
+                    {percentage !== null ? `Score: ${percentage}%` : 'Not played yet'}
+                    </p>
+                    <Link to={getQuizPath(set.id)}>
+                    {percentage !== null ? 'Review' : 'Start'}
+                    </Link>
+                </div>
             )
       })}
     </div>
-  )
-}
+  )}
+export default RecentStudysets

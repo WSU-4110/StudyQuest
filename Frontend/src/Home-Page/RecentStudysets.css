@@ -1,16 +1,58 @@
 
-.herosection-box .recent-studyset {
-    
+.hero-box .recent-studyset {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 160px;
+    align-items: flex-start;
+    gap: 8px;
+    justify-content: space-between;
+    max-width: 200px;
+    min-height: 140px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    padding: 16px;
+    background: rgba(117,85,175,0.2);
+    border: 1px solid rgba(215,184,255,0.30);
+    transition: background-color 0.3s ease, transform 0.3s ease;
+
+
+
 }
 
-.herosection-box .recent-studyset-row {
-    
+.hero-box .recent-studyset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: flex-start;
+    margin-top: 16px;
 }
 
-.herosection-box .recent-studyset h3 {
-    
+.hero-box .recent-studyset h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color:aliceblue;
+    overflow-wrap: anywhere;
 }
 
-.herosection-box .recent-studyset p {
-  
+.hero-box .recent-studyset p {
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    color: aliceblue;
 }
+
+.hero-box .recent-studyset a {
+    text-decoration: none;
+    color: aliceblue;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: rgba(117,85,175,0.3);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+
+}
+.hero-box .recent-studyset:hover {
+    background: rgba(117,85,175,0.3);
+    transform: translateY(-4px);
+}
+
