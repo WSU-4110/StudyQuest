@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee&family=Bungee+Shade&family=Nunito:wght@400;600;700;800;900&display=swap');
+
+:root{
+    --bg-page: #1c173f;
+    --bg-surface: #2b2250;
+    --bg-card: rgba(117,85,175,0.2);
+    --bg-card-hover: rgba(117,85,175,0.3);
+    --bg-glass: rgba(117,85,175,0.14);
+
+    --text-heading: rgba(231, 221, 248, 0.879);
+    --text-body: aliceblue;
+    --text-accent: var(--purp-main);
+
+    --font-display: 'Bungee Shade', sans-serif;
+    --font-heading: 'Bungee', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+
+    --purp-main: #7555af;
+    --purp-highlight: #e9e3ff;
+    --purp-dark: #543986;
+    --purp-hover: #998dc4;
+
+    --border-solid: #7653ad;
+    --border-card: rgba(215,184,255,0.30);
+    --border-soft: rgba(215, 184, 255, 0.25);
+
+    --radius-sm: 5px;
+    --radius-md: 14px;
+    --radius-lg: 24px;
+    --shadow-panel: 0 20px 60px rgba(0,0,0,0.2);
+
+    body{
+        margin: 0;
+        font-family: var(--font-body);
+        background-color: var(--bg-page);
+        color: var(--text-body);
+    }
+
+
+}
