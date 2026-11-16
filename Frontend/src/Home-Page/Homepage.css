@@ -23,7 +23,7 @@
   font-size: 5rem;
   margin: 0;
   margin-bottom: 60px;
-  color:rgba(68, 244, 68, 0.879);
+  color:rgb(231, 221, 248);
   line-height: 1.2;
 }
 
@@ -33,7 +33,7 @@
   font-family: "Bungee", sans-serif;
   font-size: 1.5rem;
   font-weight:900;
-  margin: 0;
+  margin: 0 0 3rem;
   color: #7555af;
 }
 
@@ -74,7 +74,7 @@
  /* flex-direction: column; */
  justify-content: center;
   gap: 15px;
-  margin-top: 4rem;
+  margin-top: 0;
 }
 
 /* Player XP, level, and currency display */
@@ -83,7 +83,7 @@
   justify-content: center;
   align-items: center;
   gap: 30px;
-  margin: 20px auto;
+  margin: 3rem 20px auto;
   padding: 15px 25px;
   width: fit-content;
   background-color: #2b2250;

@@ -6,7 +6,7 @@ import {supabase} from '../lib/supabaseClient.js'
 import './RecentStudysets.css'
 
 
-const MAX_RECENT_SETS = 3
+const MAX_RECENT_SETS = 6
 
 const getQuizPath = (setId) => `/studysets/${setId}`
 

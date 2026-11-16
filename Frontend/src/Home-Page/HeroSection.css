@@ -1,9 +1,9 @@
 .hero-section{
     display: flex;
     justify-content: flex-start;
-    align-items: stretch;
+    align-items: flex-start;
     flex-direction: row;
-    padding: 4rem 1rem;
+    padding: 1.5rem 1rem 4rem;
     gap: 24px;
     box-sizing: border-box;
     width: 100%;
@@ -23,6 +23,9 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.2);
     -webkit-backdrop-filter: blur(15px);
 
+}
+.hero-box{
+    container-type: inline-size;
 }
 
 .hero-box h3,
@@ -50,5 +53,16 @@
     .hero-box2{
         padding: 1rem;
         width: 100%;
+    }
+}
+
+@media(max-width: 600px){
+    .hero-section{
+        flex-direction: column;
+    }
+    .hero-box,
+    .hero-box2{
+        width: 100%;
+        padding: 1rem;
     }
 }
