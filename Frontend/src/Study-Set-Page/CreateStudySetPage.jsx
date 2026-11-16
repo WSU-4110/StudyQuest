@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../Auth-Page/AuthContext.jsx'
 import { useStudySets } from './StudySetContext.jsx'
+import GenerateFromFile from './GenerateFromFile.jsx'
 import './CreateStudySetPage.css'
 
 const CARD_TYPES = [
@@ -263,6 +264,15 @@ function CreateStudySetPage() {
     )
   }
 
+  function handleGenerated({ title: suggestedTitle, cards: generated }) {
+    // Keep anything the user already typed; drop untouched blank starter cards.
+    setCards((prev) => [
+      ...prev.filter((card) => card.question.trim()),
+      ...generated.map(hydrateCard),
+    ])
+    if (!title.trim() && suggestedTitle) setTitle(suggestedTitle)
+  }
+
   function addCard() {
     setCards((prev) => [...prev, createEmptyCard()])
   }
@@ -338,6 +348,10 @@ function CreateStudySetPage() {
 
       {session && !isPersisted && syncError ? (
         <p className="form-error">{syncError}</p>
+      ) : null}
+
+      {!isEditing ? (
+        <GenerateFromFile disabled={!session} onGenerated={handleGenerated} />
       ) : null}
 
       <form onSubmit={handleSubmit}>
