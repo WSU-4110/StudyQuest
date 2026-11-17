@@ -21,6 +21,7 @@ function App() {
     <StudySetProvider>
       <div className="app-shell">
         <Navbar />
+        <main className="theme-purp">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/studysets" element={<StudySetLibraryPage />} />
@@ -36,6 +37,7 @@ function App() {
           />
           <Route path="/login" element={<AuthPage />} />
         </Routes>
+        </main>
       </div>
     </StudySetProvider>
   )

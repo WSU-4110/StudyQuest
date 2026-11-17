@@ -14,6 +14,12 @@ function Homepage() {
   const [rewardsError, setRewardsError] = useState("");
 
   useEffect(() => {
+    if(!session) {
+      setRewards(null);
+      setRewardsError("");
+      return;
+    }
+
     let active = true;
 
     async function loadRewards() {
@@ -35,7 +41,7 @@ function Homepage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [session]);
 
   return (
     <div className="homepage-container">

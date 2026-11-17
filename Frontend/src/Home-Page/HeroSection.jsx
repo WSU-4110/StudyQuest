@@ -10,7 +10,7 @@ function HeroSection() {
             </div>
             <div className = "hero-box2">
                 <h3>Your Progress</h3>
-                <p className = "hero-text">Test</p>
+                <p className = "hero-text">Log-in to view your progress</p>
             </div>
         </div>
 
