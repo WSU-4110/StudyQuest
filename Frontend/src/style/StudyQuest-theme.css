@@ -28,13 +28,32 @@
     --radius-md: 14px;
     --radius-lg: 24px;
     --shadow-panel: 0 20px 60px rgba(0,0,0,0.2);
+}
 
     body{
         margin: 0;
+        
+    }
+
+    .theme-purp{
         font-family: var(--font-body);
         background-color: var(--bg-page);
         color: var(--text-body);
     }
 
+    
+    .theme-purp,
+    .theme-purp h1,
+    .theme-purp h2,
+    .theme-purp h3,
+    .theme-purp h4,
+    .theme-purp p {
+    color: var(--text-body);
+    }
 
-}
+    .theme-purp h1,
+    .theme-purp h2 {
+    color: var(--text-heading);
+    }
+
+

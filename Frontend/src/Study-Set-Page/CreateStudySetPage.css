@@ -9,8 +9,10 @@
 
 .create-study-set h1 {
   font-size: 1.75rem;
+  font-family: var(--font-heading);
   margin: 0 0 24px;
   letter-spacing: -0.02em;
+  color: var(--text-heading);
 }
 
 .create-study-set .field {
@@ -183,6 +185,12 @@
   margin-top: 24px;
 }
 
+.create-study-set .actions button {
+  background: #fff;
+  border-color: var(--border);
+  color: #1c173f;
+}
+
 .create-study-set button {
   font: inherit;
   padding: 10px 16px;
@@ -232,6 +240,36 @@
   .option-list > li {
     flex-wrap: wrap;
   }
+}
+
+.create-study-set {
+  --text: #e7ddf8;
+  --text-h: #ffffff;
+  --border: rgba(215, 184, 255, 0.3);
+}
+.create-study-set .field{
+  --text: #3a3350;
+  --text-h: #1c173f;  
+  --border: #cfc6e4;
+}
+
+.create-study-set .field input[type='text'] {
+  background: #fff;
+  color: #1c173f;
+}
+
+.create-study-set h1,
+.create-study-set > p {
+  color: var(--text-heading);
+}
+
+.create-study-set .card-row {
+  background: #fff;
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  --text: #3a3350;
+  --text-h: #1c173f;
+  --border: #cfc6e4;
 }
 
 .generate-panel {
