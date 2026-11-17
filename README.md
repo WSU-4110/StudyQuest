@@ -26,9 +26,7 @@ Studying the same notes over and over is boring, and bored students forget what 
 - **Responsive layout** for desktop and mobile.
 
 ### In progress
-
-- Upload a PDF, Word file, or image and have Gemini generate practice questions from it (FR-2, FR-15)
-- Search your study sets by title (FR-19)
+- none
 
 ### Planned
 
